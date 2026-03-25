@@ -7,9 +7,39 @@
 #include "util.h"
 #include "render.h"
 
-ALLEGRO_DISPLAY* disp;
-ALLEGRO_BITMAP* buffer;
+/************************************************/
+/*         Local Structure Declaration          */
+/************************************************/
 
+#define MAP 28
+typedef struct SPRITES
+{
+    ALLEGRO_BITMAP* _sheet;
+
+    ALLEGRO_BITMAP* map;
+} SPRITES;
+
+/************************************************/
+/*         Local Function Declaration           */
+/************************************************/
+void disp_pre_draw();
+void disp_post_draw();
+
+void test_disp(float x, float y);
+void test_scale_disp(float sx, float sy, float sw, float sh,
+    float dx, float dy, float dw, float dh, int flags);
+
+static ALLEGRO_DISPLAY* disp;
+static ALLEGRO_BITMAP* buffer;
+
+/************************************************/
+/*         Local Variable Declaration           */
+/************************************************/
+SPRITES sprites;
+
+/************************************************/
+/*          Global Function Definition          */
+/************************************************/
 void render_update(void)
 {
 #if 0
@@ -59,12 +89,15 @@ void disp_deinit()
     al_destroy_display(disp);
 }
 
-void disp_pre_draw()
+/************************************************/
+/*          Local Function Definition           */
+/************************************************/
+static void disp_pre_draw()
 {
     al_set_target_bitmap(buffer);
 }
 
-void disp_post_draw()
+static void disp_post_draw()
 {
     al_set_target_backbuffer(disp); // 스케일 업된 버퍼 지정
     al_draw_scaled_bitmap(buffer, 0, 0, BUFFER_W, BUFFER_H, 0, 0, DISP_W, DISP_H, 0);   // 스케일 업
@@ -72,17 +105,15 @@ void disp_post_draw()
     al_flip_display(); // 스케일 업된 버퍼를 실제 화면에 그림
 }
 
-
-// --- sprites ---
-#define MAP 28
-
-typedef struct SPRITES
+static void test_disp(float x, float y)
 {
-    ALLEGRO_BITMAP* _sheet;
+    al_draw_bitmap(sprites.map, x, y, 0);
+}
 
-    ALLEGRO_BITMAP* map;
-} SPRITES;
-SPRITES sprites;
+static void test_scale_disp(float sx, float sy, float sw, float sh,
+    float dx, float dy, float dw, float dh, int flags) {
+    al_draw_scaled_bitmap(sprites.map, sx, sy, sw, sh, dx, dy, dw, dh, 0);
+}
 
 ALLEGRO_BITMAP* sprite_grab(int x, int y, int w, int h)
 {
@@ -97,16 +128,6 @@ void sprites_init()
     must_init(sprites._sheet, "spritesheet");
 
     sprites.map = sprite_grab(8, 9, MAP, MAP);
-}
-
-void test_disp(float x, float y)
-{
-    al_draw_bitmap(sprites.map, x, y, 0);
-}
-
-void test_scale_disp(float sx, float sy, float sw, float sh,
-    float dx, float dy, float dw, float dh, int flags) {
-    al_draw_scaled_bitmap(sprites.map,sx,sy,sw,sh,dx,dy,dw,dh, 0);
 }
 
 

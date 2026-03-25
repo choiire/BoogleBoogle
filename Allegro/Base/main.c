@@ -13,37 +13,16 @@
 ALLEGRO_EVENT_QUEUE* init_queue(void);
 ALLEGRO_TIMER* init_timer(ALLEGRO_EVENT_QUEUE* queue);
 void init_keyboard(ALLEGRO_EVENT_QUEUE* queue);
+void keyboard_update(ALLEGRO_EVENT* event);
 
-int frames;
-
-// --- keyboard ---
-
+/************************************************/
+/*         Local Variable Declaration           */
+/************************************************/
 #define KEY_SEEN     1
 #define KEY_DOWN     2
-unsigned char key[ALLEGRO_KEY_MAX];
+static int frames;
 
-void keyboard_init()
-{
-    memset(key, 0, sizeof(key));
-}
-
-void keyboard_update(ALLEGRO_EVENT* event)
-{
-    switch (event->type)
-    {
-    case ALLEGRO_EVENT_TIMER:
-        for (int i = 0; i < ALLEGRO_KEY_MAX; i++)
-            key[i] &= ~KEY_SEEN;
-        break;
-
-    case ALLEGRO_EVENT_KEY_DOWN:
-        key[event->keyboard.keycode] = KEY_SEEN | KEY_DOWN;
-        break;
-    case ALLEGRO_EVENT_KEY_UP:
-        key[event->keyboard.keycode] &= ~KEY_DOWN;
-        break;
-    }
-}
+static unsigned char key[ALLEGRO_KEY_MAX];
 
 /************************************************/
 /*          Global Function Definition          */
@@ -129,6 +108,24 @@ static ALLEGRO_TIMER* init_timer(ALLEGRO_EVENT_QUEUE* queue)
 static void init_keyboard(ALLEGRO_EVENT_QUEUE* queue)
 {
     must_init(al_install_keyboard(), "keyboard");
-    keyboard_init();
     al_register_event_source(queue, al_get_keyboard_event_source());
+    memset(key, 0, sizeof(key));
+}
+
+static void keyboard_update(ALLEGRO_EVENT* event)
+{
+    switch (event->type)
+    {
+    case ALLEGRO_EVENT_TIMER:
+        for (int i = 0; i < ALLEGRO_KEY_MAX; i++)
+            key[i] &= ~KEY_SEEN;
+        break;
+
+    case ALLEGRO_EVENT_KEY_DOWN:
+        key[event->keyboard.keycode] = KEY_SEEN | KEY_DOWN;
+        break;
+    case ALLEGRO_EVENT_KEY_UP:
+        key[event->keyboard.keycode] &= ~KEY_DOWN;
+        break;
+    }
 }

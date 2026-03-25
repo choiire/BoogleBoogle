@@ -13,11 +13,4 @@ void render_update(void);
 void render_draw(void);
 void deinit_render();
 
-void disp_pre_draw();
-void disp_post_draw();
-
-void test_disp(float x, float y);
-void test_scale_disp(float sx, float sy, float sw, float sh,
-    float dx, float dy, float dw, float dh, int flags);
-
 #endif
