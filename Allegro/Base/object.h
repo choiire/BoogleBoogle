@@ -1,7 +1,9 @@
 #ifndef __OBJECT_H__
 #define __OBJECT_H__
 
-/* Á¤¿ø´Ô ÇÊ¿äÇÏ¸é Ãß°¡ */
+#include <stdbool.h>
+
+/* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½ï¿½Ï¸ï¿½ ï¿½ß°ï¿½ */
 typedef enum {
 	eOBJ_TAG_TILE = 0,
 	eOBJ_TAG_PLAYER,
@@ -42,7 +44,7 @@ typedef struct {
 } stPHYSICS;
 
 typedef struct {
-	int i;	/* TODO:  */
+	int is_active;	/* TODO:  */
 } stRENDER;
 
 typedef struct {
