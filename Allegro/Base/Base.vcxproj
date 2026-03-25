@@ -143,9 +143,6 @@
     <ClCompile Include="util.c" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="bubble.h" />
     <ClInclude Include="bugglebuggle.h" />
     <ClInclude Include="collision.h" />
@@ -158,6 +155,9 @@
     <ClInclude Include="player.h" />
     <ClInclude Include="render.h" />
     <ClInclude Include="util.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
