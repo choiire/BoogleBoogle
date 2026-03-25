@@ -1,11 +1,11 @@
 
 #if 01
 
+#include "enemy.h"
 #include <stdio.h>
 #include <stdlib.h>
-
-
-// FSM Funcs
+#include <stdbool.h>
+#include <math.h>
 
 
 #endif
