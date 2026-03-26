@@ -1,6 +1,8 @@
 #include "map.h"
 
 
+
+
 stTILE* stTILE_init(stTILE* tile, stPOSITION* pos)
 {
 	tile->obj = (stOBJECT){

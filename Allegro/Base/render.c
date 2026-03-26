@@ -6,7 +6,7 @@
 
 #include "util.h"
 #include "render.h"
-
+#include "map.h"
 /************************************************/
 /*         Local Structure Declaration          */
 /************************************************/
@@ -26,9 +26,8 @@ void disp_pre_draw();
 void disp_post_draw();
 
 void test_disp(float x, float y);
-void test_scale_disp(float sx, float sy, float sw, float sh,
-    float dx, float dy, float dw, float dh, int flags);
-
+void test_scale_disp(float dx, float dy, float dw, float dh, int flags);
+void map_render();
 static ALLEGRO_DISPLAY* disp;
 static ALLEGRO_BITMAP* buffer;
 
@@ -44,19 +43,17 @@ void render_update(void)
 {
 #if 0
     fx_update();
-    shots_update();
-    stars_update();
-    ship_update();
-    aliens_update();
     hud_update();
 #endif
 }
 
 void render_draw(void)
 {
-#if 0
     disp_pre_draw();
     al_clear_to_color(al_map_rgb(0, 0, 0));
+    //test_scale_disp(20, 20, 14, 14, 0);
+    map_render();
+#if 0
 
     stars_draw();
     aliens_draw();
@@ -66,8 +63,8 @@ void render_draw(void)
 
     hud_draw();
 
-    disp_post_draw();
 #endif
+    disp_post_draw();
 }
 
 void disp_init()
@@ -110,9 +107,8 @@ static void test_disp(float x, float y)
     al_draw_bitmap(sprites.map, x, y, 0);
 }
 
-static void test_scale_disp(float sx, float sy, float sw, float sh,
-    float dx, float dy, float dw, float dh, int flags) {
-    al_draw_scaled_bitmap(sprites.map, sx, sy, sw, sh, dx, dy, dw, dh, 0);
+static void test_scale_disp(float dx, float dy, float dw, float dh, int flags) {
+    al_draw_scaled_bitmap(sprites.map,0,0, MAP, MAP, dx, dy, dw, dh, flags);
 }
 
 ALLEGRO_BITMAP* sprite_grab(int x, int y, int w, int h)
@@ -138,6 +134,22 @@ void sprites_deinit()
     al_destroy_bitmap(sprites._sheet);
 }
 
+static void map_render() {
+    int stage1[5][10] =
+    { {1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+    {1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+    {1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+    {1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+    {1, 1, 1, 1, 1, 1, 1, 1, 1, 1}};
+    for (int i = 0; i < 5; ++i) {
+        for (int j = 0; j < 10; ++j) {
+            if (stage1[i][j] == 1) {
+                test_scale_disp(i*14,j*14, 14, 14, 0);
+            }
+
+        }
+    }
+}
 #if 0
 // --- fx ---
 
