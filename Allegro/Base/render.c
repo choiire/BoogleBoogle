@@ -18,14 +18,29 @@
 
 #define SPRITE_PLAYER_MAX (5)
 #define SPRITE_PLAYER_STAY (2)
+#define SPRITE_PLAYER_ATTACK (4)
+
+#define SPRITE_ENEMY_MAX (5)
+#define SPRITE_ENEMY_STAY (2)
 
 typedef struct {
     int idx;
     ALLEGRO_BITMAP* left[SPRITE_PLAYER_MAX];
     ALLEGRO_BITMAP* right[SPRITE_PLAYER_MAX];
     ALLEGRO_BITMAP* stay[SPRITE_PLAYER_STAY];
+    ALLEGRO_BITMAP* left_attack[SPRITE_PLAYER_ATTACK];
+    ALLEGRO_BITMAP* right_attack[SPRITE_PLAYER_ATTACK];
     ALLEGRO_BITMAP* curr_move;
 } stSPRITE_PLAYER;
+
+typedef struct {
+    int idx;
+    ALLEGRO_BITMAP* left[SPRITE_ENEMY_MAX];
+    ALLEGRO_BITMAP* right[SPRITE_ENEMY_MAX];
+    ALLEGRO_BITMAP* stay[SPRITE_ENEMY_STAY];
+    ALLEGRO_BITMAP* curr_move;
+} stSPRITE_ENEMY;
+
 
 typedef struct SPRITES
 {
@@ -52,6 +67,45 @@ static ALLEGRO_BITMAP* buffer;
 /*         Local Variable Declaration           */
 /************************************************/
 SPRITES sprites;
+static void render_player_move(stPLAYER* player) {
+    if (player == NULL) return;
+
+    static int time = 0;
+
+    switch(player->state)
+    {
+    case ePLAYER_STATE_MOVE:
+        time++;
+        sprites.player.idx = (time / 2) % SPRITE_PLAYER_MAX;;
+
+        switch (player->obj.phy.look)
+        {
+        case eDIR_LOOK_LEFT:
+            sprites.player.curr_move = sprites.player.left[sprites.player.idx];
+            break;
+        case eDIR_LOOK_RIGHT:
+            sprites.player.curr_move = sprites.player.right[sprites.player.idx];
+            break;
+        }
+    case ePLAYER_STATE_IDLE:
+        switch (player->obj.phy.look)
+        {
+        case eDIR_LOOK_LEFT:
+            sprites.player.curr_move = sprites.player.stay[0];
+            break;
+        case eDIR_LOOK_RIGHT:
+            sprites.player.curr_move = sprites.player.stay[1];
+            break;
+        }
+        
+
+    }
+    character_scale_disp(sprites.player.curr_move, player->obj.phy.pos.x, player->obj.phy.pos.y, SCALE, SCALE, 0);
+
+}
+  
+
+    
 
 /************************************************/
 /*          Global Function Definition          */
@@ -67,8 +121,7 @@ void render_update(void)
 
 void render_draw(void)
 {
-    static int time = 0;
-    stPLAYER* player = GAME_MANAGER_GetPlayer(0);
+    
     disp_pre_draw();
     al_clear_to_color(al_map_rgb(0, 0, 0));
 
@@ -79,35 +132,7 @@ void render_draw(void)
     case ePLAYER_STATE_MOVE:
 
     }*/
-    if (player->state == ePLAYER_STATE_MOVE) 
-    {
-        time++;
-        sprites.player.idx = (time/2) % SPRITE_PLAYER_MAX;
-        if (player->obj.phy.look == eDIR_LOOK_LEFT) 
-        {
-            
-            sprites.player.curr_move = sprites.player.left[sprites.player.idx];
-
-        }
-        else if (player->obj.phy.look == eDIR_LOOK_RIGHT) {
-            
-            sprites.player.curr_move = sprites.player.right[sprites.player.idx];
-        }
-    
-    }
-    else if(player->state == ePLAYER_STATE_IDLE)
-    {
-        if (player->obj.phy.look == eDIR_LOOK_LEFT)
-        {
-            sprites.player.curr_move = sprites.player.stay[0];
-        }
-        else if (player->obj.phy.look == eDIR_LOOK_RIGHT) 
-        {
-            sprites.player.curr_move = sprites.player.stay[0];
-        }
-    }
-    
-    character_scale_disp(sprites.player.curr_move, player->obj.phy.pos.x, player->obj.phy.pos.y, SCALE, SCALE, 0);
+    render_player_move(GAME_MANAGER_GetPlayer(0));
 
     //character_scale_disp(10, 220, SCALE, SCALE, 0);
 #if 0
@@ -197,6 +222,14 @@ void sprites_init()
     sprites.player.right[2] = sprite_grab(465, 16, CHARACTER, CHARACTER);
     sprites.player.right[3] = sprite_grab(528, 16, CHARACTER, CHARACTER);
     sprites.player.right[4] = sprite_grab(590, 16, CHARACTER, CHARACTER);
+    sprites.player.left_attack[0] = sprite_grab(268,335, CHARACTER, CHARACTER);
+    sprites.player.left_attack[1] = sprite_grab(204, 335, CHARACTER, CHARACTER);
+    sprites.player.left_attack[2] = sprite_grab(140, 335, CHARACTER, CHARACTER);
+    sprites.player.left_attack[3] = sprite_grab(74, 335, CHARACTER, CHARACTER);
+    sprites.player.right_attack[0] = sprite_grab(332, 335, CHARACTER, CHARACTER);
+    sprites.player.right_attack[1] = sprite_grab(397, 335, CHARACTER, CHARACTER);
+    sprites.player.right_attack[2] = sprite_grab(463, 335, CHARACTER, CHARACTER);
+    sprites.player.right_attack[3] = sprite_grab(528, 335, CHARACTER, CHARACTER);
 
 }
 
