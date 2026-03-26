@@ -6,6 +6,7 @@
 #include "util.h"
 #include "player.h"
 #include "render.h"
+#include "map.h"
 
 /************************************************/
 /*         Local Function Declaration           */
@@ -49,6 +50,7 @@ int main()
     al_start_timer(timer);
     while (1)
     {
+        map_init_stage1();// Game Manager
         al_wait_for_event(queue, &event);
 
         switch (event.type)
