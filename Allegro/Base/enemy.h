@@ -47,6 +47,8 @@ typedef struct {
 //│   │       ├── double height
 //│   │       └── double width
 //│   ├── stPHYSICS phy
+//│   │   ├── bool is_move
+//│   │   ├── bool is_gravity
 //│   │   ├── eDIR_LOOK look
 //│   │   │   ├── eDIR_LOOK_RIGHT(0)
 //│   │   │   ├── eDIR_LOOK_LEFT(1)
@@ -106,7 +108,6 @@ eENEMY_STATE Enemy_GetCurrentState(stENEMY* enemy);				// get the enemy's curren
 // They are called every frame by Enemy_Update loop
 void Enemy_UpdateIdle(stENEMY* enemy);							// 0 update IDLE state
 void Enemy_UpdateMove(stENEMY* enemy);							// 0 update MOVE state
-void Enemy_UpdateJump(stENEMY* enemy);							// 0 update JUMP state
 void Enemy_UpdateAttack(stENEMY* enemy);						// 0 update ATTACK state
 void Enemy_UpdateTrapped(stENEMY* enemy);						// 0 update TRAPPED (bubble) state
 void Enemy_UpdateDead(stENEMY* enemy);							// update DEAD state
@@ -125,7 +126,6 @@ void Enemy_MoveTowardPlayer(stENEMY* enemy, int x, int y);		// 0 move enemy towa
 // No State Decision: These functions typically do not decide state transitions themselves. 
 // They just perform their job.
 void Enemy_Move(stENEMY* enemy);								// 0 move enemy (generic movement)
-void Enemy_Jump(stENEMY* enemy);								// 0 make enemy jump
 void Enemy_Throw(stENEMY* enemy);								// 0 make enemy Throw
 
 // throw maintain
