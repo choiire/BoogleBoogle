@@ -48,6 +48,9 @@ typedef struct {
 } stRENDER;
 
 typedef struct {
+	/* Enable Object */
+	bool		is_active;
+
 	/* Collision */
 	stCOLLISION coll;
 

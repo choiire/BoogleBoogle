@@ -11,9 +11,13 @@
 /*         Local Function Declaration           */
 /************************************************/
 
+/* Init Modules */
 ALLEGRO_EVENT_QUEUE* init_queue(void);
 ALLEGRO_TIMER* init_timer(ALLEGRO_EVENT_QUEUE* queue);
+
 void init_keyboard(ALLEGRO_EVENT_QUEUE* queue);
+
+/* Input Processing */
 void keyboard_update(ALLEGRO_EVENT* event);
 void send_input(void);
 
