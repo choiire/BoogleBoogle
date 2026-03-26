@@ -10,7 +10,7 @@ typedef enum {
 	eENEMY_STATE_ATTACK,
 	eENEMY_STATE_TRAPPED,
 	eENEMY_STATE_DEAD,
-	eENEMY_STATE_MAX		// no mean. number of STATE
+	eENEMY_STATE_MAX		// no mean. number of STATE -> for (..i<eENEMY_MAX..)
 } eENEMY_STATE;
 
 typedef enum {
@@ -25,8 +25,8 @@ typedef struct {
 	eENEMY_STATE	state;
 	eENEMY_TYPE		type;	// type of mob
 	
-	int state_timer;		//
-	int proximity_to_player;// just in case
+	int state_timer;		// 
+	//int proximity_to_player;// just in case
 	int trapped_timer;		// count down of bubble escape
 	bool is_angry;			// angry state
 	
@@ -79,34 +79,14 @@ typedef struct {
 //└── bool is_angry
 
 typedef struct {
-	stOBJECT obj;
-	int damage;			// damage
+	float x, y;
+	float vx, vy;			// speed
+	int state;				// 0: flying, 1: trapped, 2: blow
 	int lifetime_timer;	// obj disappear timer
-	// i added cause it's simple then calc map boundary
-	//int owner_tag;		// it make use eENEMY_THROW both player n mob
+	//struct Bubble* next; // require when make it to linked list
+} stTHROW;
 
-}eENEMY_THROW;
 
-//eENEMY_THROW
-//├── stOBJECT obj
-//│   ├── stCOLLISION coll
-//│   │   ├── bool is_static
-//│   │   ├── eOBJ_TAG tag
-//│   │   └── stCOLLISION_BOX box
-//│   │       ├── double height
-//│   │       └── double width
-//│   ├── stPHYSICS phy
-//│   │   ├── eDIR_LOOK look
-//│   │   ├── stPOSITION pos
-//│   │   │   ├── double x
-//│   │   │   └── double y
-//│   │   └── stPOSITION speed
-//│   │       ├── double x
-//│   │       └── double y
-//│   └── stRENDER rend
-//│       └── int is_active
-//├── int damage
-//└── int lifetime_timer
 
 // pool management
 void Enemy_InitializePool(void);								// initialize enemy pool when begin
@@ -114,13 +94,16 @@ int Enemy_GetActiveCount(void);									// get number of active enemies
 
 // single enemy manage
 stENEMY* Enemy_Create(eENEMY_TYPE type, int x, int y);			// create n initialize an enemy
-void Enemy_Destroy(stENEMY* enemy);								// destroy n free memory for an enemy
+//void Enemy_Destroy(stENEMY* enemy);								// destroy an enemy
 
 // state manage
 void Enemy_ChangeState(stENEMY* enemy, eENEMY_STATE newState);	// change the enemy's current state
 eENEMY_STATE Enemy_GetCurrentState(stENEMY* enemy);				// get the enemy's current state
 
-// update state
+// state logic handler
+// They define what the enemy continuously does while it is in a specific state, 
+// and when it should transition out of that state
+// They are called every frame by Enemy_Update loop
 void Enemy_UpdateIdle(stENEMY* enemy);							// 0 update IDLE state
 void Enemy_UpdateMove(stENEMY* enemy);							// 0 update MOVE state
 void Enemy_UpdateJump(stENEMY* enemy);							// 0 update JUMP state
@@ -129,18 +112,27 @@ void Enemy_UpdateTrapped(stENEMY* enemy);						// 0 update TRAPPED (bubble) stat
 void Enemy_UpdateDead(stENEMY* enemy);							// update DEAD state
 
 // for main update
-void Enemy_Update(stENEMY* enemy);								// 0 update single enemy
-void Enemy_UpdateAll(void);										// 0 update all active enemies
+void Enemy_Update(stENEMY* enemy);								// update single enemy
+void Enemy_UpdateAll(void);										// update all active enemies
 
 // AI n behavior
-bool Enemy_IsPlayerNearby(stENEMY* enemy, int range);			// 0 check if player is within a certain range
 void Enemy_DecideNextAction(stENEMY* enemy);					// 0 decide the next action based on AI
-void Enemy_MoveTowardPlayer(stENEMY* enemy);					// 0 move enemy towards the player
+void Enemy_MoveTowardPlayer(stENEMY* enemy, int x, int y);		// 0 move enemy toward the player
 
-// actions
+// atomic actions
+// define how a single, specific action or behavior is physically performed
+// they are called when a specific action is needed
+// No State Decision: These functions typically do not decide state transitions themselves. 
+// They just perform their job.
 void Enemy_Move(stENEMY* enemy);								// 0 move enemy (generic movement)
 void Enemy_Jump(stENEMY* enemy);								// 0 make enemy jump
 void Enemy_Throw(stENEMY* enemy);								// 0 make enemy Throw
-void Enemy_TakeDamage(stENEMY* enemy, int damage);				// 0 apply damage to enemy
+
+// throw maintain
+stENEMY* Throw_Create(int x, int y);							// 0 create throw obj
+void Throw_Update(stTHROW* throw);								// 0 update throw
+void Throw_MoveTowardPlayer(stTHROW* throw);					// 0 keep forward to player
+void Throw_Destroy(stTHROW* throw);								// 0 destroy touch player or out of map
+
 
 #endif

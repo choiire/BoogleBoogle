@@ -52,7 +52,7 @@ stENEMY* Enemy_Create(eENEMY_TYPE type, int x, int y) {
 
             enemy->state_timer = 0;
             enemy->trapped_timer = REMAIN_TRAPPED_TIMER;
-            enemy->proximity_to_player = 0;
+            //enemy->proximity_to_player = 0;
             enemy->is_angry = false;
 
             return enemy;
@@ -61,10 +61,10 @@ stENEMY* Enemy_Create(eENEMY_TYPE type, int x, int y) {
     return NULL; // fail to create. no room for pool
 }
 
-// useless. if u wanna delete -> Enemy_UpdateDead!
-void Enemy_Destroy(stENEMY* enemy) {
-    if (enemy == NULL) return;
-}
+//// useless. if u wanna delete -> Enemy_UpdateDead!
+//void Enemy_Destroy(stENEMY* enemy) {
+//    if (enemy == NULL) return;
+//}
 
 void Enemy_ChangeState(stENEMY* enemy, eENEMY_STATE newState) {
     if (enemy == NULL) return;
@@ -82,13 +82,16 @@ void Enemy_UpdateIdle(stENEMY* enemy) {
     if (enemy == NULL) return;
     Enemy_ChangeState(enemy, eENEMY_STATE_MOVE);
 }
+
 void Enemy_UpdateMove(stENEMY* enemy) {
     if (enemy == NULL) return;
-
+    enemy->obj.phy.pos.x += enemy->obj.phy.speed.x;
+    enemy->obj.phy.pos.y += enemy->obj.phy.speed.y;
 }
 void Enemy_UpdateJump(stENEMY* enemy) {
     if (enemy == NULL) return;
-
+    enemy->obj.phy.speed.y = -3;                    // temp val, it means go up 
+    Enemy_ChangeState(enemy, eENEMY_STATE_JUMP);
 }
 void Enemy_UpdateAttack(stENEMY* enemy) {
     if (enemy == NULL) return;
@@ -110,33 +113,48 @@ void Enemy_UpdateDead(stENEMY* enemy) {
 void Enemy_Update(stENEMY* enemy) {
     if (enemy == NULL) return;
 
+    // just maintain timer in Update func
+    // i thought it make simple
+    enemy->state_timer++;
+
+    switch (enemy->state) {
+    case eENEMY_STATE_IDLE:
+        Enemy_UpdateIdle(enemy);
+        break;
+    case eENEMY_STATE_MOVE:
+        Enemy_UpdateMove(enemy);
+        break;
+    case eENEMY_STATE_JUMP:
+        Enemy_UpdateJump(enemy);
+        break;
+    case eENEMY_STATE_ATTACK:
+        Enemy_UpdateAttack(enemy);
+        break;
+    case eENEMY_STATE_TRAPPED:
+        Enemy_UpdateTrapped(enemy);
+        break;
+    case eENEMY_STATE_DEAD:
+        Enemy_UpdateDead(enemy);
+        break;
+    default:
+        break;
+    }
 }
+
 void Enemy_UpdateAll(void) {
     for (int i = 0; i < MAX_ENEMIES; i++) {
-        if (!enemy_active[i]) {
+        if (enemy_active[i]) {
             stENEMY* enemy = &enemy_pool[i];
-
-            switch (enemy->state) {
-            case eENEMY_STATE_IDLE:
-                break;
-                    
-
-
-            }
-
+            Enemy_Update(enemy);
         }
     }
 }
 
-bool Enemy_IsPlayerNearby(stENEMY* enemy, int range) {
-    if (enemy == NULL) return;
-
-}
 void Enemy_DecideNextAction(stENEMY* enemy) {
     if (enemy == NULL) return;
 
 }
-void Enemy_MoveTowardPlayer(stENEMY* enemy) {
+void Enemy_MoveTowardPlayer(stENEMY* enemy, int x, int y) {
     if (enemy == NULL) return;
 
 }
@@ -153,8 +171,39 @@ void Enemy_Throw(stENEMY* enemy) {
     if (enemy == NULL) return;
 
 }
-void Enemy_TakeDamage(stENEMY* enemy, int damage) {
-    if (enemy == NULL) return;
+
+// maintain Throw to arr? or linked list?
+stENEMY* Throw_Create(int x, int y) {
+
+
+}
+
+void Throw_Update(stTHROW* throw) {
+
+
+}
+
+
+// refrence
+//void SkelFollowPlayer(Enemy* skel, Player* p, float speed) {
+//    float dx = p->x - skel->x;
+//    float dy = p->y - skel->y;
+//    float dist = sqrt(dx * dx + dy * dy);
+//    if (dist > 0) {
+//        skel->vx = (dx / dist) * speed;
+//        skel->vy = (dy / dist) * speed;
+//    }
+//    skel->x += skel->vx;
+//    skel->y += skel->vy;
+//}
+void Throw_MoveTowardPlayer(stTHROW* throw) {
+
+
+}
+
+void Throw_Destroy(stTHROW* throw) {
+
+
 }
 
 #endif
