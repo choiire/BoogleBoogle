@@ -34,7 +34,7 @@ void disp_post_draw();
 void test_disp(float x, float y);
 void map_scale_disp(float dx, float dy, float dw, float dh, int flags);
 void character_scale_disp(float px, float py, float dw, float dh, int flags);
-void map_render(stTILE* tiles, size_t tile_len);
+void render_map(stTILE* tiles, size_t tile_len);
 static ALLEGRO_DISPLAY* disp;
 static ALLEGRO_BITMAP* buffer;
 
@@ -61,7 +61,7 @@ void render_draw(void)
     disp_pre_draw();
     al_clear_to_color(al_map_rgb(0, 0, 0));
 
-    map_render(GAME_MANAGER_GetMap(), CONFIG_MAP_Y_MAX * CONFIG_MAP_X_MAX);
+    render_map(GAME_MANAGER_GetMap(), CONFIG_MAP_Y_MAX * CONFIG_MAP_X_MAX);
     character_scale_disp(player->obj.phy.pos.x, player->obj.phy.pos.y, SCALE, SCALE, 0);
     //character_scale_disp(10, 220, SCALE, SCALE, 0);
 #if 0
@@ -152,7 +152,7 @@ void sprites_deinit()
     al_destroy_bitmap(sprites._sheet);
 }
 
-static void map_render(stTILE  *tiles, size_t tile_len) {
+static void render_map(stTILE  *tiles, size_t tile_len) {
     
     for (int i = 0; i < tile_len; ++i) {
         float x = tiles[i].obj.phy.pos.x;
