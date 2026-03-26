@@ -2,26 +2,24 @@
 #if 01
 
 #include "enemy.h"
+#include "player.h"
+#include "bugglebuggle.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include <math.h>
-#define MAX_ENEMIES (6)
-#define REMAIN_TRAPPED_TIMER (30)
 
-static stENEMY enemy_pool[MAX_ENEMIES];			// for make
-static bool enemy_active[MAX_ENEMIES];          // manage active mob to arr
-
-void Enemy_InitializePool(void) { 
-    for (int i = 0; i < MAX_ENEMIES; i++) {
-        enemy_active[i] = false; // make sure defalt setting to 0
+void Enemy_InitializePool(stENEMY *enemy) {
+    for (int i = 0; i < CONFIG_OBJECT_ENEMY_MAX; i++) {
+        (enemy+i)->obj.rend.is_active = 0; // make sure defalt setting to 0
     }
 }
 
-int Enemy_GetActiveCount(void) {
+int Enemy_GetActiveCount(stENEMY* enemy) {
     int count = 0;
-    for (int i = 0; i < MAX_ENEMIES; i++) {
-        if (enemy_active[i]) {
+    for (int i = 0; i < CONFIG_OBJECT_ENEMY_MAX; i++) {
+        if ((enemy + i)->obj.rend.is_active) {
             count++;
         }
     }
@@ -29,153 +27,186 @@ int Enemy_GetActiveCount(void) {
 }
 
 // input type: BASIC, THROW, BOSS  &  x, y
-stENEMY* Enemy_Create(eENEMY_TYPE type, int x, int y) {
-    for (int i = 0; i < MAX_ENEMIES; i++) {
-        if (!enemy_active[i]) {
-            stENEMY* enemy = &enemy_pool[i];
-            enemy_active[i] = true;
+stENEMY* Enemy_Create(stENEMY* enemy, eENEMY_TYPE type, int x, int y) {
+    for (int i = 0; i < CONFIG_OBJECT_ENEMY_MAX; i++) {
+        stENEMY* new_enemy = &enemy[i];
 
-            enemy->obj.phy.pos.x = x;
-            enemy->obj.phy.pos.y = y;
-            enemy->obj.phy.speed.x = 0;
-            enemy->obj.phy.speed.y = 0;
+        if (!new_enemy->obj.rend.is_active) {
+            stOBJECT* obj = &new_enemy->obj;
+            stPHYSICS* phy = &obj->phy;
+            stCOLLISION* coll = &obj->coll;
 
-            enemy->obj.coll.box.width = 1;          // temp val. it should change later
-            enemy->obj.coll.box.height = 1;         // temp val. it should change later
-            enemy->obj.coll.tag = eOBJ_TAG_ENEMY;
-            enemy->obj.coll.is_static = false;
+            obj->rend.is_active = true;
+            phy->pos.x = x;
+            phy->pos.y = y;
 
-            enemy->obj.rend.is_active = 1;
+            switch (type) {
+            case eENEMY_TYPE_BASIC:
+                phy->speed.x = 0;
+                phy->speed.y = 0;
+                coll->box.width = 1;          // temp val. it should change later
+                coll->box.height = 1;         // temp val. it should change later
+                new_enemy->trapped_timer = 30;
+                break;
+            case eENEMY_TYPE_THROW:
+                phy->speed.x = 0;
+                phy->speed.y = 0;
+                coll->box.width = 1;          // temp val. it should change later
+                coll->box.height = 1;         // temp val. it should change later
+                new_enemy->trapped_timer = 30;
+                break;
+            case eENEMY_TYPE_BOSS:
+                phy->speed.x = 0;
+                phy->speed.y = 0;
+                coll->box.width = 1;          // temp val. it should change later
+                coll->box.height = 1;         // temp val. it should change later
+                new_enemy->trapped_timer = 1;
+                break;
+            }
 
-            enemy->state = eENEMY_STATE_IDLE;
-            enemy->type = type;
+            coll->tag = eOBJ_TAG_ENEMY;
+            coll->is_static = false;
 
-            enemy->state_timer = 0;
-            enemy->trapped_timer = REMAIN_TRAPPED_TIMER;
-            //enemy->proximity_to_player = 0;
-            enemy->is_angry = false;
+            obj->rend.is_active = 1;
 
-            return enemy;
+            new_enemy->state = eENEMY_STATE_IDLE;
+            new_enemy->type = type;
+
+            new_enemy->state_timer = 0;
+            new_enemy->is_angry = false;
+
+            return new_enemy;
         }
     }
     return NULL; // fail to create. no room for pool
 }
 
-//// useless. if u wanna delete -> Enemy_UpdateDead!
-//void Enemy_Destroy(stENEMY* enemy) {
-//    if (enemy == NULL) return;
-//}
+void Enemy_ChangeState(stENEMY* e, eENEMY_STATE newState) {
+    if (e == NULL) return;
 
-void Enemy_ChangeState(stENEMY* enemy, eENEMY_STATE newState) {
-    if (enemy == NULL) return;
-
-    enemy->state = newState;
-    enemy->state_timer = 0;
+    e->state = newState;
+    e->state_timer = 0;
 }
-eENEMY_STATE Enemy_GetCurrentState(stENEMY* enemy) {
-    if (enemy == NULL) return;
-    return enemy->state;
+eENEMY_STATE Enemy_GetCurrentState(stENEMY* e) {
+    if (e == NULL) return;
+    return e->state;
 }
 
 // mob idle only when begin -> move immidately
-void Enemy_UpdateIdle(stENEMY* enemy) {
-    if (enemy == NULL) return;
-    Enemy_ChangeState(enemy, eENEMY_STATE_MOVE);
+void Enemy_UpdateIdle(stENEMY* e) {
+    if (e == NULL) return;
+    Enemy_ChangeState(e, eENEMY_STATE_MOVE);
 }
 
-void Enemy_UpdateMove(stENEMY* enemy) {
-    if (enemy == NULL) return;
-    enemy->obj.phy.pos.x += enemy->obj.phy.speed.x;
-    enemy->obj.phy.pos.y += enemy->obj.phy.speed.y;
+void Enemy_UpdateMove(stENEMY* e) {
+    if (e == NULL) return;
+
+    stPHYSICS* phy = &e->obj.phy;
+
+    phy->pos.x += phy->speed.x;
+    phy->pos.y += phy->speed.y;
 }
-void Enemy_UpdateJump(stENEMY* enemy) {
-    if (enemy == NULL) return;
-    enemy->obj.phy.speed.y = -3;                    // temp val, it means go up 
-    Enemy_ChangeState(enemy, eENEMY_STATE_JUMP);
-}
-void Enemy_UpdateAttack(stENEMY* enemy) {
-    if (enemy == NULL) return;
+
+void Enemy_UpdateAttack(stENEMY* e) {
+    if (e == NULL) return;
 
 }
-void Enemy_UpdateTrapped(stENEMY* enemy) {
-    if (enemy == NULL) return;
+void Enemy_UpdateTrapped(stENEMY* e) {
+    if (e == NULL) return;
 
 }
 
 // it doesn't reset all things. only active arr state
-void Enemy_UpdateDead(stENEMY* enemy) {
-    if (enemy == NULL) return;
-    int index = enemy - enemy_pool;
-    enemy_active[index] = false;
+void Enemy_UpdateDead(stENEMY* enemy, stENEMY* e) {
+    if (e == NULL) return;
+    int index = enemy - e;
+    (e + index)->obj.rend.is_active = false;
     //enemy->state = eENEMY_STATE_DEAD;
 }
 
-void Enemy_Update(stENEMY* enemy) {
-    if (enemy == NULL) return;
+void Enemy_Update(stENEMY* enemy, stENEMY* e) {
+    if (e == NULL) return;
 
     // just maintain timer in Update func
     // i thought it make simple
-    enemy->state_timer++;
+    e->state_timer++;
 
-    switch (enemy->state) {
+    switch (e->state) {
     case eENEMY_STATE_IDLE:
-        Enemy_UpdateIdle(enemy);
+        Enemy_UpdateIdle(e);
         break;
     case eENEMY_STATE_MOVE:
-        Enemy_UpdateMove(enemy);
+        Enemy_UpdateMove(e);
         break;
     case eENEMY_STATE_JUMP:
-        Enemy_UpdateJump(enemy);
+        //Enemy_UpdateJump(e);
         break;
     case eENEMY_STATE_ATTACK:
-        Enemy_UpdateAttack(enemy);
+        Enemy_UpdateAttack(e);
         break;
     case eENEMY_STATE_TRAPPED:
-        Enemy_UpdateTrapped(enemy);
+        Enemy_UpdateTrapped(e);
         break;
     case eENEMY_STATE_DEAD:
-        Enemy_UpdateDead(enemy);
+        Enemy_UpdateDead(enemy, e);
         break;
     default:
         break;
     }
 }
 
-void Enemy_UpdateAll(void) {
-    for (int i = 0; i < MAX_ENEMIES; i++) {
-        if (enemy_active[i]) {
-            stENEMY* enemy = &enemy_pool[i];
-            Enemy_Update(enemy);
+void Enemy_UpdateAll(stENEMY* enemy) {
+    for (int i = 0; i < CONFIG_OBJECT_ENEMY_MAX; i++) {
+        stENEMY* e = &enemy[i];
+        if (e->obj.rend.is_active) {
+            Enemy_Update(enemy, e);
         }
     }
 }
 
-void Enemy_DecideNextAction(stENEMY* enemy) {
-    if (enemy == NULL) return;
+void Enemy_DecideNextAction(stENEMY* e) {
+    if (e == NULL) return;
 
 }
-void Enemy_MoveTowardPlayer(stENEMY* enemy, int x, int y) {
-    if (enemy == NULL) return;
-
-}
-
-void Enemy_Move(stENEMY* enemy) {
-    if (enemy == NULL) return;
-
-}
-void Enemy_Jump(stENEMY* enemy) {
-    if (enemy == NULL) return;
-
-}
-void Enemy_Throw(stENEMY* enemy) {
-    if (enemy == NULL) return;
+void Enemy_MoveTowardPlayer(stENEMY* e, int x, int y) {
+    if (e == NULL) return;
 
 }
 
-// maintain Throw to arr? or linked list?
-stENEMY* Throw_Create(int x, int y) {
+void Enemy_Move(stENEMY* e) {
+    if (e == NULL) return;
 
+}
+void Enemy_Jump(stENEMY* e) {
+    if (e == NULL) return;
 
+}
+void Enemy_Throw(stENEMY* e) {
+    if (e == NULL) return;
+
+}
+
+stOBJECT* Throw_Create(stOBJECT* obj, int x, int y) {
+
+    stPHYSICS* phy = &obj->phy;
+    stCOLLISION* coll = &obj->coll;
+    stRENDER* rend = &obj->rend;
+
+    rend->is_active = true;
+
+    phy->pos.x = x;
+    phy->pos.y = y;
+    phy->speed.x = 0;
+    phy->speed.y = 0;
+
+    coll->box.width = 1;                    // temp val. it should change later
+    coll->box.height = 1;                   // temp val. it should change later
+    coll->tag = eOBJ_TAG_ENEMY_ATTACK;
+    coll->is_static = false;
+
+    rend->is_active = 1;
+
+    return obj;
 }
 
 void Throw_Update(stTHROW* throw) {
@@ -184,21 +215,23 @@ void Throw_Update(stTHROW* throw) {
 }
 
 
-// refrence
-//void SkelFollowPlayer(Enemy* skel, Player* p, float speed) {
-//    float dx = p->x - skel->x;
-//    float dy = p->y - skel->y;
-//    float dist = sqrt(dx * dx + dy * dy);
-//    if (dist > 0) {
-//        skel->vx = (dx / dist) * speed;
-//        skel->vy = (dy / dist) * speed;
-//    }
-//    skel->x += skel->vx;
-//    skel->y += skel->vy;
-//}
-void Throw_MoveTowardPlayer(stTHROW* throw) {
+void Throw_MoveTowardPlayer(stOBJECT* throw, stPLAYER* player) {
+    stPHYSICS* t_phy = &throw->phy;
+    stPHYSICS* p_phy = &player->obj.phy;
 
+    float dx = p_phy->pos.x - t_phy->pos.x;
+    float dy = p_phy->pos.y - t_phy->pos.y;
 
+    float dist = sqrt(dx * dx + dy * dy);
+    int   speed = 10;
+
+    if (dist > 0) {
+        t_phy->speed.x = (dx / dist) * speed;
+        t_phy->speed.y = (dy / dist) * speed;
+    }
+
+    t_phy->pos.x += t_phy->speed.x;
+    t_phy->pos.y += t_phy->speed.y;
 }
 
 void Throw_Destroy(stTHROW* throw) {
