@@ -2,6 +2,7 @@
 #include "collision.h"
 #include "player.h"
 #include "enemy.h"
+#include "collision.h"
 
 /* Collision */
 static stPLAYER player[CONFIG_OBJECT_PLAYER_MAX];
