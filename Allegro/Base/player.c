@@ -4,7 +4,6 @@
 
 // --- player ---
 
-#define PALYER_SPEED 3 // fix it later
 #define SHIP_W 1
 #define SHIP_H 1
 #define SHIP_W 1
@@ -13,22 +12,28 @@
 
 static stPLAYER player;
 
+// fix it later
+const double GRAVITY = 1.0;
+const double JUMP_SPEED = 15.0;
+const double PALYER_SPEED = 3.0;
+
 void player_init()
 {
     player = (stPLAYER){
-        .obj.coll.box.height = 2, // fix it later
-        .obj.coll.box.width = 2,
+        .obj.coll.box.height = 2.0, // fix it later
+        .obj.coll.box.width = 2.0,
         .obj.coll.is_static = false,
         .obj.coll.tag = eOBJ_TAG_PLAYER,
         .obj.phy.look = eDIR_LOOK_RIGHT,
-        .obj.phy.speed.x = PALYER_SPEED,
-        .obj.phy.speed.y = PALYER_SPEED,
-        .obj.phy.pos.x = 10, // init pos, fix it later
-        .obj.phy.pos.y = 10,
+        .obj.phy.speed.x = 0.0,
+        .obj.phy.speed.y = 0.0,
+        .obj.phy.pos.x = 10.0, // init pos, fix it later
+        .obj.phy.pos.y = 10.0,
         .state = ePLAYER_STATE_IDLE,
         .shot_timer = 0,
         .lives = 3,
         .invincible_timer = 0,
+        .is_jump = false,
         //.obj.rend,
     };
 }
@@ -36,18 +41,37 @@ void player_init()
 void player_update(int allegro_key, unsigned char flag)
 {
     if (player.lives < 0)
+        player.state = ePLAYER_STATE_DEAD;
         return;
 
+    player.state = ePLAYER_STATE_IDLE;
+
     if (allegro_key == ALLEGRO_KEY_LEFT) {
-        player.obj.phy.pos.x -= player.obj.phy.speed.x;
+        player.obj.phy.speed.x = -PALYER_SPEED;
         player.state = ePLAYER_STATE_MOVE;
     }
-    if (allegro_key == ALLEGRO_KEY_RIGHT)
-        player.obj.phy.pos.x += player.obj.phy.speed.x;
-    if (allegro_key == ALLEGRO_KEY_UP)
-        player.obj.phy.pos.y -= player.obj.phy.speed.y; // jump func logic
+    else if (allegro_key == ALLEGRO_KEY_RIGHT) {
+        player.obj.phy.speed.x = PALYER_SPEED;
+        player.state = ePLAYER_STATE_MOVE;
+    }
+    else {
+        player.obj.phy.speed.x = 0;
+    }
+
+    if (allegro_key == ALLEGRO_KEY_UP && !player.is_jump) {
+        player.obj.phy.speed.y = -JUMP_SPEED; // jump func logic
+        player.is_jump = true;
+        player.state = ePLAYER_STATE_JUMP;
+    }
     //if (allegro_key == ALLEGRO_KEY_DOWN)      downward jump implemented later
     //    ship.y += SHIP_SPEED;  
+
+    if (player.is_jump) {
+        player.obj.phy.speed.y += GRAVITY;
+    }
+
+    player.obj.phy.pos.x += player.obj.phy.speed.x;
+    player.obj.phy.pos.y += player.obj.phy.speed.y;
 
     if (player.invincible_timer)
         player.invincible_timer--;
@@ -64,17 +88,19 @@ void player_update(int allegro_key, unsigned char flag)
         player.shot_timer--;
     else if (allegro_key == ALLEGRO_KEY_SPACE)
     {
-        if (bubble_add(player))
+        if (bubble_add(player)) {
             player.shot_timer = 60; // 1s delay
+            player.state = ePLAYER_STATE_ATTACK;
+        }
     }
 }
 
-void player_draw()
-{
-    if (player.lives < 0)
-        return;
-    if (((player.invincible_timer / 2) % 3) == 1) // blinked
-        return;
-
-    //al_draw_bitmap(sprites.ship, ship.x, ship.y, 0);
-}
+//void player_draw()
+//{
+//    if (player.lives < 0)
+//        return;
+//    if (((player.invincible_timer / 2) % 3) == 1) // blinked
+//        return;
+//
+//    //al_draw_bitmap(sprites.ship, ship.x, ship.y, 0);
+//}
