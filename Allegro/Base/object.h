@@ -1,6 +1,8 @@
 #ifndef __OBJECT_H__
 #define __OBJECT_H__
 
+#include <stdbool.h>
+
 /* 정원님 필요하면 추가 */
 typedef enum {
 	eOBJ_TAG_TILE = 0,

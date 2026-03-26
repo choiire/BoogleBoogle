@@ -9,19 +9,15 @@ typedef enum {
 	ePLAYER_STATE_ATTACK,
 	ePLAYER_STATE_DEAD,
 	ePLAYER_STATE_MAX
-} ePLAYER_STATE;
+}ePLAYER_STATE;
 
 typedef struct {
 	/* OBJECT */
 	ePLAYER_STATE	state;
 	stOBJECT		obj;
-
-	/*
-	int heart;
-		무적시간
-		마지막 공격 시점 등등...
-		structure 추천!
-	*/
-} stPLAYER;
+	int shot_timer;
+	int lives;
+	int invincible_timer;
+}stPLAYER;
 
 #endif
