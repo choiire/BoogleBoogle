@@ -20,6 +20,7 @@ typedef struct {
 	int shot_timer;
 	int lives;
 	int invincible_timer;
+	bool is_jump;
 } stPLAYER;
 
 void init_player(void);

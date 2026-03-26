@@ -3,7 +3,7 @@
 
 #include <stdbool.h>
 
-/* ������ �ʿ��ϸ� �߰� */
+/*  */
 typedef enum {
 	eOBJ_TAG_TILE = 0,
 	eOBJ_TAG_PLAYER,
