@@ -52,7 +52,7 @@ void render_draw(void)
     disp_pre_draw();
     al_clear_to_color(al_map_rgb(0, 0, 0));
     //test_scale_disp(20, 20, 14, 14, 0);
-    map_render();
+    map_render(map_get_stage_tile(1), 10);
 #if 0
 
     stars_draw();
@@ -134,20 +134,12 @@ void sprites_deinit()
     al_destroy_bitmap(sprites._sheet);
 }
 
-static void map_render() {
-    int stage1[5][10] =
-    { {1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-    {1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-    {1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-    {1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-    {1, 1, 1, 1, 1, 1, 1, 1, 1, 1}};
-    for (int i = 0; i < 5; ++i) {
-        for (int j = 0; j < 10; ++j) {
-            if (stage1[i][j] == 1) {
-                test_scale_disp(i*14,j*14, 14, 14, 0);
-            }
-
-        }
+static void map_render(stTILE  *tiles, size_t tile_len) {
+    
+    for (int i = 0; i < tile_len; ++i) {
+        float x = tiles[i].obj.phy.pos.x;
+        float y = tiles[i].obj.phy.pos.y;
+        test_scale_disp(x, y, 14, 14, 0);
     }
 }
 #if 0
