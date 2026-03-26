@@ -17,6 +17,11 @@ stPLAYER *GAME_MANAGER_GetPlayer(int player_id)
 	return &player[player_id];
 }
 
+stOBJECT* GAME_MANAGER_GetEnemyAttacks(void)
+{
+	return enemy_attack;
+}
+
 void GAME_MANAGER_InitStageObject(eGAME_STAGE stage, stOBJECT *obj)
 {
 }
