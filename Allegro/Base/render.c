@@ -52,7 +52,7 @@ void render_draw(void)
     disp_pre_draw();
     al_clear_to_color(al_map_rgb(0, 0, 0));
     //test_scale_disp(20, 20, 14, 14, 0);
-    map_render(map_get_stage_tile(1), 10);
+    map_render(map_get_stage_tile(1), 50);
 #if 0
 
     stars_draw();

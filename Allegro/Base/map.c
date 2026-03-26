@@ -26,23 +26,26 @@ stTILE* stTILE_init(stTILE* tile, stPOSITION* pos)
 }
 
 void map_init_stage1() {
-	/*int stage1[5][10] =
+#define MAP_1_SIZE_Y  (5)
+#define MAP_1_SIZE_X  (10)
+
+	int stage[MAP_1_SIZE_Y][MAP_1_SIZE_X] =
 	{ {1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
 	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+	{1, 1, 1, 1, 0, 1, 1, 1, 1, 1},
 	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1} };*/
+	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1} };
 
-	for (int i = 0; i < 10; ++i) {
-		stPOSITION pos;
-		/*int* stage = stage1;*/
+	for (int i = 0; i < MAP_1_SIZE_Y; ++i) {
+		for (int j = 0; j < MAP_1_SIZE_X; ++j) {
+			stPOSITION pos;
 
-		/*if (stage[i] != 0) {*/
-			
-		pos.x = i * 14;
-		pos.y = i * 14;
-		stTILE_init(&stage1[i], &pos);
-		//}
+			if (stage[i][j] != 0) {
+				pos.x = j * 14;
+				pos.y = i * 14;
+				stTILE_init(&stage1[(i * MAP_1_SIZE_X) + j], &pos);
+			}
+		}
 	}
 	
 }
