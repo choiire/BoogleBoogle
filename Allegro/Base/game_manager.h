@@ -5,6 +5,7 @@
 #include "object.h"
 #include "player.h"
 #include "map.h"
+#include "enemy.h"
 
 stPLAYER* GAME_MANAGER_GetPlayer(int player_id);
 stOBJECT* GAME_MANAGER_GetEnemyAttacks(void);
