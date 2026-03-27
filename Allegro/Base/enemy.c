@@ -68,6 +68,8 @@ stENEMY* Enemy_Create(stENEMY* enemy, eENEMY_TYPE type, int x, int y) {
     return NULL; // fail to create. no room for pool
 }
 
+#if 0
+
 void Enemy_Update(stENEMY* e, stOBJECT* p, stOBJECT* t) {
     if (e == NULL) return;
 
@@ -335,6 +337,7 @@ void Throw_MoveTowardPlayer(stOBJECT* throw, stOBJECT* target_player) {
     t_pos->x += t_speed->x;
     t_pos->y += t_speed->y;
 }
+#endif
 
 static int Get_RandNum_1_to_9(void) {
     static uint32_t x = 123456789;
@@ -343,5 +346,4 @@ static int Get_RandNum_1_to_9(void) {
     x ^= x << 5;
     return (x % 9) + 1;
 }
-#endif
 #endif

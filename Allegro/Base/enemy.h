@@ -92,11 +92,11 @@ int Enemy_GetActiveCount(stENEMY* enemy);						// get number of active enemies
 // single enemy manage
 stENEMY* Enemy_Create(stENEMY* enemy, eENEMY_TYPE type, int x, int y);			// create n initialize an enemy
 
+#if 0
 // for main update
 void Enemy_Update(stENEMY* enemy, stOBJECT* target_player, stOBJECT* throw);	// update single enemy
 void Throw_Update(stOBJECT* throw, stOBJECT* target_player);					// update throw
 
-#if 0
 // state manage
 void Enemy_ChangeState(stENEMY* enemy, eENEMY_STATE newState);					// change the enemy's current state
 eENEMY_STATE Enemy_GetCurrentState(stENEMY* enemy);								// get the enemy's current state
@@ -125,4 +125,5 @@ void Throw_MoveTowardPlayer(stOBJECT* throw, stOBJECT* target_player);			// keep
 // make random number between 1 to 9
 int Get_RandNum_1_to_9(void);
 
+#endif
 #endif
