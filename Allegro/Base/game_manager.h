@@ -5,6 +5,7 @@
 #include "object.h"
 #include "player.h"
 #include "map.h"
+#include "enemy.h"
 
 typedef enum {
 	eGAME_STATE_MAIN = 0,
