@@ -26,6 +26,7 @@
 #define SPRITE_ENEMY_MAX (5)
 #define SPRITE_ENEMY_STAY (2)
 #define SPRITE_ENEMY_EASY (50)
+#define SPRITE_ENEMY_HARD (47)
 #define ENEMY_THROW (21)
 
 typedef struct 
@@ -98,7 +99,9 @@ void character_scale_disp(ALLEGRO_BITMAP* sprite, float px, float py, float dw, 
 
 //enemy
 void enemy_easy_scale_disp(ALLEGRO_BITMAP* sprite, float px, float py, float dw, float dh, int flags);
+void enemy_hard_scale_disp(ALLEGRO_BITMAP* sprite, float px, float py, float dw, float dh, int flags);
 void render_enemy_easy_move(stENEMY* enemy);
+void render_enemy_hard_move(stENEMY* enemy);
 void render_enemy_throw_attack(stOBJECT* enemy_throw);
 void enemy_throw_scale_disp(ALLEGRO_BITMAP* sprite, float px, float py, float dw, float dh, int flags);
 static ALLEGRO_DISPLAY* disp;
@@ -238,7 +241,9 @@ static void enemy_easy_scale_disp(ALLEGRO_BITMAP* sprite, float px, float py, fl
     al_draw_scaled_bitmap(sprite, 0, 0, SPRITE_ENEMY_EASY, SPRITE_ENEMY_EASY, px, py, dw, dh, flags);
 }
 
-
+void enemy_hard_scale_disp(ALLEGRO_BITMAP* sprite, float px, float py, float dw, float dh, int flags) {
+    al_draw_scaled_bitmap(sprite, 0, 0, SPRITE_ENEMY_HARD, SPRITE_ENEMY_HARD, px, py, dw, dh, flags);
+}
 static void enemy_throw_scale_disp(ALLEGRO_BITMAP* sprite, float px, float py, float dw, float dh, int flags) {
     al_draw_scaled_bitmap(sprite, 0, 0, ENEMY_THROW, ENEMY_THROW, px, py, dw, dh, flags);
 }
@@ -305,6 +310,20 @@ void sprites_init()
 
     //enemy_hard
     sprites.enemy_hard.throw = sprite_grab(50, 659, ENEMY_THROW, ENEMY_THROW);
+
+    sprites.enemy_hard.left[0] = sprite_grab(16, 1309, SPRITE_ENEMY_HARD, SPRITE_ENEMY_HARD);
+    sprites.enemy_hard.left[1] = sprite_grab(80, 1309, SPRITE_ENEMY_HARD, SPRITE_ENEMY_HARD);
+    sprites.enemy_hard.left[2] = sprite_grab(144, 1309, SPRITE_ENEMY_HARD, SPRITE_ENEMY_HARD);
+    sprites.enemy_hard.left[3] = sprite_grab(208, 1309, SPRITE_ENEMY_HARD, SPRITE_ENEMY_HARD);
+    sprites.enemy_hard.left[4] = sprite_grab(272, 1309, SPRITE_ENEMY_HARD, SPRITE_ENEMY_HARD);
+
+    sprites.enemy_hard.right[0] = sprite_grab(591, 1309, SPRITE_ENEMY_HARD, SPRITE_ENEMY_HARD);
+    sprites.enemy_hard.right[1] = sprite_grab(525, 1309, SPRITE_ENEMY_HARD, SPRITE_ENEMY_HARD);
+    sprites.enemy_hard.right[2] = sprite_grab(461, 1309, SPRITE_ENEMY_HARD, SPRITE_ENEMY_HARD);
+    sprites.enemy_hard.right[3] = sprite_grab(397, 1309, SPRITE_ENEMY_HARD, SPRITE_ENEMY_HARD);
+    sprites.enemy_hard.right[4] = sprite_grab(333, 1309, SPRITE_ENEMY_HARD, SPRITE_ENEMY_HARD);
+
+
     //bubble
     sprites.bubble.bubble_idle = sprite_grab(135,1467,BUBBLE ,BUBBLE);
     sprites.bubble.bubble_pop = sprite_grab(416, 1460, BUBBLE_POP, BUBBLE_POP);
@@ -341,6 +360,33 @@ void sprites_deinit()
 
     al_destroy_bitmap(sprites.bubble.bubble_idle);
     al_destroy_bitmap(sprites.bubble.bubble_pop);
+
+    al_destroy_bitmap(sprites.enemy_easy.left[0]);
+    al_destroy_bitmap(sprites.enemy_easy.left[1]);
+    al_destroy_bitmap(sprites.enemy_easy.left[2]);
+    al_destroy_bitmap(sprites.enemy_easy.left[3]);
+    al_destroy_bitmap(sprites.enemy_easy.left[4]);
+
+    al_destroy_bitmap(sprites.enemy_easy.right[0]);
+    al_destroy_bitmap(sprites.enemy_easy.right[1]);
+    al_destroy_bitmap(sprites.enemy_easy.right[2]);
+    al_destroy_bitmap(sprites.enemy_easy.right[3]);
+    al_destroy_bitmap(sprites.enemy_easy.right[4]);
+
+
+    al_destroy_bitmap(sprites.enemy_hard.left[0]);
+    al_destroy_bitmap(sprites.enemy_hard.left[1]);
+    al_destroy_bitmap(sprites.enemy_hard.left[2]);
+    al_destroy_bitmap(sprites.enemy_hard.left[3]);
+    al_destroy_bitmap(sprites.enemy_hard.left[4]);
+
+    al_destroy_bitmap(sprites.enemy_hard.right[0]);
+    al_destroy_bitmap(sprites.enemy_hard.right[1]);
+    al_destroy_bitmap(sprites.enemy_hard.right[2]);
+    al_destroy_bitmap(sprites.enemy_hard.right[3]);
+    al_destroy_bitmap(sprites.enemy_hard.right[4]);
+
+
 
     al_destroy_bitmap(sprites.enemy_hard.throw);
 
@@ -412,10 +458,10 @@ static void render_enemy_easy_move(stENEMY* enemy) {
         switch (enemy->obj.phy.look)
         {
         case eDIR_LOOK_LEFT:
-            sprites.player.curr_move = sprites.enemy_easy.left[sprites.enemy_easy.idx];
+            sprites.enemy_easy.curr_move = sprites.enemy_easy.left[sprites.enemy_easy.idx];
             break;
         case eDIR_LOOK_RIGHT:
-            sprites.player.curr_move = sprites.enemy_easy.right[sprites.enemy_easy.idx];
+            sprites.enemy_easy.curr_move = sprites.enemy_easy.right[sprites.enemy_easy.idx];
             break;
         }
         break;
@@ -433,10 +479,48 @@ static void render_enemy_easy_move(stENEMY* enemy) {
         break;
 
     }
-    character_scale_disp(sprites.enemy_easy.curr_move, enemy->obj.phy.pos.x, enemy->obj.phy.pos.y, SCALE, SCALE, FLAG_0);
+    enemy_easy_scale_disp(sprites.enemy_easy.curr_move, enemy->obj.phy.pos.x, enemy->obj.phy.pos.y, SCALE, SCALE, FLAG_0);
 
 }
 
+static void render_enemy_hard_move(stENEMY* enemy) {
+    if (enemy == NULL) return;
+
+    static int time = 0;
+
+    switch (enemy->obj.rend.is_move)
+    {
+    case true:
+        time++;
+        sprites.enemy_easy.idx = (time / 6) % SPRITE_PLAYER_MAX;;
+
+        switch (enemy->obj.phy.look)
+        {
+        case eDIR_LOOK_LEFT:
+            sprites.enemy_hard.curr_move = sprites.enemy_hard.left[sprites.enemy_hard.idx];
+            break;
+        case eDIR_LOOK_RIGHT:
+            sprites.enemy_hard.curr_move = sprites.enemy_hard.right[sprites.enemy_hard.idx];
+            break;
+        }
+        break;
+    case false:
+        time = 0;
+        switch (enemy->obj.phy.look)
+        {
+        case eDIR_LOOK_LEFT:
+            sprites.enemy_hard.curr_move = sprites.enemy_hard.left[0];
+            break;
+        case eDIR_LOOK_RIGHT:
+            sprites.enemy_hard.curr_move = sprites.enemy_hard.right[0];
+            break;
+        }
+        break;
+
+    }
+    enemy_hard_scale_disp(sprites.enemy_hard.curr_move, enemy->obj.phy.pos.x, enemy->obj.phy.pos.y, SCALE, SCALE, FLAG_0);
+
+}
 
 static void render_enemy_throw_attack(stOBJECT* enemy_throw) {
     if (enemy_throw == NULL) return;
