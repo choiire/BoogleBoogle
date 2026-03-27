@@ -1,14 +1,18 @@
 #include <stdlib.h>
 #include <stdbool.h>
+
+#include "bugglebuggle.h"
 #include "physics.h"
 
+const static double GRAVITY = CONFIG_PHYSICS_GRAVITY_FORCE;
+const static double JUMP_SPEED = CONFIG_PHYSICS_JUMP_FORCE;
 
-static bool collide(int ax1, int ay1, int ax2, int ay2, int bx1, int by1, int bx2, int by2)
-{
-    if (ax1 > bx2) return false;
-    if (ax2 < bx1) return false;
-    if (ay1 > by2) return false;
-    if (ay2 < by1) return false;
+void stOBJECT_UpdatePhysics(stOBJECT* obj) {
+	obj->phy.pos.x += obj->phy.speed.x;
+	obj->phy.pos.y += obj->phy.speed.y;
 
-    return true;
+	if (obj->phy.is_gravity) {
+		obj->phy.speed.y += GRAVITY;
+	}
+	obj->phy.speed.x = 0;
 }

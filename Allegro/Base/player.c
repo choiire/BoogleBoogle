@@ -7,8 +7,6 @@
 // --- player ---
 
 // fix it later
-const static double GRAVITY = 1.0;
-const static double JUMP_SPEED = 8.0;
 const static double PLAYER_SPEED = 3.0;
 
 void init_player(stPLAYER* player)
@@ -61,7 +59,7 @@ void player_update_input(stPLAYER* player, int allegro_key, unsigned char flag)
 		if (player->is_jump == true)
 			break;
 
-		player->obj.phy.speed.y = -JUMP_SPEED;
+		player->obj.phy.speed.y = - CONFIG_PHYSICS_JUMP_FORCE;
 		player->is_jump = true;
 		player->state = ePLAYER_STATE_MOVE;
 	}
@@ -98,20 +96,13 @@ void player_update_frame(stPLAYER* player) {
 		return;
 	}
 #endif
-	if ((player->obj.phy.speed.x == 0) && (player->obj.phy.speed.y == 0)) {
+	// TODO: Need To Modify
+	if ((player->obj.phy.speed.x == 0)/* && (player->obj.phy.speed.y == 0)*/) {
 		player->state = ePLAYER_STATE_IDLE;
 	}
 
-	player->obj.phy.pos.x += player->obj.phy.speed.x;
-	player->obj.phy.pos.y += player->obj.phy.speed.y;
-
 	if (player->shot_timer > 0) player->shot_timer--;
 	if (player->invincible_timer > 0) player->invincible_timer--;
-
-	if (player->obj.phy.is_gravity) {
-		player->obj.phy.speed.y += GRAVITY;
-	}
-	player->obj.phy.speed.x = 0;
 }
 
 #if (DEBUG_PLAYER == 1)

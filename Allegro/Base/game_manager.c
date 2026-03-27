@@ -1,6 +1,7 @@
 #include "game_manager.h"
 #include "collision.h"
 #include "player.h"
+#include "physics.h"
 #include "enemy.h"
 #include "map_1.h"
 #include "map_2.h"
@@ -46,6 +47,12 @@ void GAME_MANAGER_CheckCollision(void)
 }
 
 void GAME_MANAGER_UpdatePhysics(void)
+{
+	// TODO: Need to apply enemy
+	stOBJECT_UpdatePhysics(&player[0].obj);
+}
+
+void GAME_MANAGER_UpdateObject(void)
 {
 	player_update_frame(&player[0]);
 }

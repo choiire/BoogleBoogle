@@ -63,9 +63,10 @@ int main()
             send_input();
             /* Calculate Interaction & State */
             GAME_MANAGER_CheckCollision();
-            /* Apply Calculated State, Interaction */
-            /* GAME_MANAGER_Update Object */
+            /* Apply Calculated Physics */
             GAME_MANAGER_UpdatePhysics();
+            /* Apply Object Status */
+            GAME_MANAGER_UpdateObject();
 
             render_update();
 
