@@ -23,8 +23,8 @@ typedef enum {
 typedef struct {
 	/* OBJECT */
 	stOBJECT		obj;	// collsion, p
-	eENEMY_STATE	state;
 	eENEMY_TYPE		type;	// type of mob
+	eENEMY_STATE	state;
 	
 	int state_timer;		// 
 	//int proximity_to_player;// just in case

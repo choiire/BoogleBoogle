@@ -1,5 +1,5 @@
 
-#if 01
+#if 00
 
 #include "enemy.h"
 #include "bugglebuggle.h"
@@ -12,72 +12,29 @@
 #include <time.h>
 #include <stddef.h> 
 
-int Get_RandNum_1_to_9(void) {
-    static uint32_t x = 123456789;
-    x ^= x << 13;
-    x ^= x >> 17;
-    x ^= x << 5;
-    return (x % 9) + 1;
-}
+/************************************************/
+/*         Local Function Declaration           */
+/************************************************/
+int Get_RandNum_1_to_9(void);
 
-void Enemy_InitializePool(stENEMY *enemy) {
-    for (int i = 0; i < CONFIG_OBJECT_ENEMY_MAX; i++) {
-        (enemy+i)->obj.rend.is_active = 0; // make sure defalt setting to 0
-    }
-}
-
-int Enemy_GetActiveCount(stENEMY* enemy) {
-    int count = 0;
-    for (int i = 0; i < CONFIG_OBJECT_ENEMY_MAX; i++) {
-        if ((enemy + i)->obj.rend.is_active) {
-            count++;
-        }
-    }
-    return count;
-}
+/************************************************/
+/*          Global Function Definition          */
+/************************************************/
 
 // input type: BASIC, THROW, BOSS  &  x, y
 stENEMY* Enemy_Create(stENEMY* enemy, eENEMY_TYPE type, int x, int y) {
     for (int i = 0; i < CONFIG_OBJECT_ENEMY_MAX; i++) {
         stENEMY* new_enemy = &enemy[i];
 
-        if (!new_enemy->obj.rend.is_active) {
+        if (!new_enemy->obj.is_active) {
             stOBJECT* obj = &new_enemy->obj;
             stPHYSICS* phy = &obj->phy;
             stCOLLISION* coll = &obj->coll;
 
-            obj->rend.is_active = true;
-            phy->pos.x = x;
-            phy->pos.y = y;
-
-            switch (type) {
-            case eENEMY_TYPE_BASIC:
-                phy->speed.x = 0;
-                phy->speed.y = 0;
-                coll->box.width = 1;          // temp val. it should change later
-                coll->box.height = 1;         // temp val. it should change later
-                new_enemy->trapped_timer = 30;
-                break;
-            case eENEMY_TYPE_THROW:
-                phy->speed.x = 0;
-                phy->speed.y = 0;
-                coll->box.width = 1;          // temp val. it should change later
-                coll->box.height = 1;         // temp val. it should change later
-                new_enemy->trapped_timer = 30;
-                break;
-            case eENEMY_TYPE_BOSS:
-                phy->speed.x = 0;
-                phy->speed.y = 0;
-                coll->box.width = 1;          // temp val. it should change later
-                coll->box.height = 1;         // temp val. it should change later
-                new_enemy->trapped_timer = 1;
-                break;
-            }
+            obj->is_active = true;
 
             coll->tag = eOBJ_TAG_ENEMY;
             coll->is_static = false;
-
-            obj->rend.is_active = 1;
 
             new_enemy->state = eENEMY_STATE_IDLE;
             new_enemy->type = type;
@@ -85,10 +42,58 @@ stENEMY* Enemy_Create(stENEMY* enemy, eENEMY_TYPE type, int x, int y) {
             new_enemy->state_timer = 0;
             new_enemy->is_angry = false;
 
+            phy->speed.x = 0;
+            phy->speed.y = 0;
+            coll->box.width = PLAYER_W;          // temp val. it should change later
+            coll->box.height = PLAYER_W;         // temp val. it should change later
+
+            phy->pos.x = x;
+            phy->pos.y = y;
+
+            switch (type) {
+            case eENEMY_TYPE_BASIC:
+                new_enemy->trapped_timer = 30;
+                break;
+            case eENEMY_TYPE_THROW:
+                new_enemy->trapped_timer = 10;
+                break;
+            case eENEMY_TYPE_BOSS:
+                new_enemy->trapped_timer = 1;
+                break;
+            }
+
             return new_enemy;
         }
     }
     return NULL; // fail to create. no room for pool
+}
+
+void Enemy_Update(stENEMY* enemy, stENEMY* e) {
+    if (e == NULL) return;
+
+    // just maintain timer in Update func
+    // i thought it make simple
+    e->state_timer++;
+
+    switch (e->state) {
+    case eENEMY_STATE_IDLE:
+        Enemy_UpdateIdle(e);
+        break;
+    case eENEMY_STATE_MOVE:
+        Enemy_UpdateMove(e);
+        break;
+    case eENEMY_STATE_ATTACK:
+        Enemy_UpdateAttack(e);
+        break;
+    case eENEMY_STATE_TRAPPED:
+        Enemy_UpdateTrapped(e);
+        break;
+    case eENEMY_STATE_DEAD:
+        Enemy_UpdateDead(enemy, e);
+        break;
+    default:
+        break;
+    }
 }
 
 void Enemy_ChangeState(stENEMY* e, eENEMY_STATE newState) {
@@ -97,6 +102,11 @@ void Enemy_ChangeState(stENEMY* e, eENEMY_STATE newState) {
     e->state = newState;
     e->state_timer = 0;
 }
+
+/************************************************/
+/*         Local Function Definition            */
+/************************************************/
+
 eENEMY_STATE Enemy_GetCurrentState(stENEMY* e) {
     if (e == NULL) return eENEMY_STATE_MAX;
     return e->state;
@@ -136,42 +146,6 @@ void Enemy_UpdateDead(stENEMY* enemy, stENEMY* e) {
     }
 }
 
-void Enemy_Update(stENEMY* enemy, stENEMY* e) {
-    if (e == NULL) return;
-
-    // just maintain timer in Update func
-    // i thought it make simple
-    e->state_timer++;
-
-    switch (e->state) {
-    case eENEMY_STATE_IDLE:
-        Enemy_UpdateIdle(e);
-        break;
-    case eENEMY_STATE_MOVE:
-        Enemy_UpdateMove(e);
-        break;
-    case eENEMY_STATE_ATTACK:
-        Enemy_UpdateAttack(e);
-        break;
-    case eENEMY_STATE_TRAPPED:
-        Enemy_UpdateTrapped(e);
-        break;
-    case eENEMY_STATE_DEAD:
-        Enemy_UpdateDead(enemy, e);
-        break;
-    default:
-        break;
-    }
-}
-
-void Enemy_UpdateAll(stENEMY* enemy) {
-    for (int i = 0; i < CONFIG_OBJECT_ENEMY_MAX; i++) {
-        stENEMY* e = &enemy[i];
-        if (e->obj.rend.is_active) {
-            Enemy_Update(enemy, e);
-        }
-    }
-}
 // reference
 //extern bool IsHittingWall(double x, double y);
 //extern bool HasGroundAhead(double x, double y, int dir);
@@ -203,13 +177,14 @@ void Enemy_UpdateAll(stENEMY* enemy) {
 //    m->y += m->vy;
 //}
 
-void Enemy_ToPlayer_Ground(stENEMY* enemy, stPLAYER* player) {
-    if (enemy == NULL || player == NULL) return;
+void Enemy_ToPlayer_Ground(stENEMY* enemy, stOBJECT* target) {
+    if (enemy == NULL || target == NULL) return;
 
     stPOSITION* e_pos = &enemy->obj.phy.pos;
     stPOSITION* e_speed = &enemy->obj.phy.speed;
     eDIR_LOOK* e_look = &enemy->obj.phy.look;
 
+    /* TODO:  */
     float begin_speed = 1.0f;
     float cur_speed = begin_speed * (enemy->is_angry ? 1.8f : 1.0f);
 
@@ -219,27 +194,30 @@ void Enemy_ToPlayer_Ground(stENEMY* enemy, stPLAYER* player) {
     e_speed->x = dir * cur_speed;
 
     // wall collision check and reflect dir
+#if 0   /* Need to apply collsion */
     if (IsHittingWall(e_pos->x + e_speed->x, e_pos->y)) {
         e_speed->x *= -1; // reflect dir
         if (*e_look == 0) *e_look = 1;
         if (*e_look == 1) *e_look = 0;
     }
+#endif
 
     // jump logic
     if (enemy->state == eENEMY_STATE_MOVE) {
 
         if (!HasGroundAhead(e_pos->x, e_pos->y, dir) 
-            || (player->obj.phy.pos.y < e_pos->y && (rand() % 100 < 5))) {
+            || (target->phy.pos.y < e_pos->y && (rand() % 100 < 5))) {
             e_speed->y = -5.0f;
             Enemy_ChangeState(enemy, eENEMY_STATE_MOVE);
             // chage to MOVE!
         }
     }
 
+#if 0
     // this part going to replace MOVE func that share with player
     e_pos->x += e_speed->x;
     e_pos->y += e_speed->y;
-
+#endif
 }
 
 // reference
@@ -350,6 +328,29 @@ void Throw_MoveTowardPlayer(stOBJECT* throw, stPLAYER* player) {
     t_pos->y += t_speed->y;
 }
 
+void Enemy_InitializePool(stENEMY* enemy) {
+    for (int i = 0; i < CONFIG_OBJECT_ENEMY_MAX; i++) {
+        (enemy + i)->obj.rend.is_active = 0; // make sure defalt setting to 0
+    }
+}
 
+int Enemy_GetActiveCount(stENEMY* enemy) {
+    int count = 0;
+    for (int i = 0; i < CONFIG_OBJECT_ENEMY_MAX; i++) {
+        if ((enemy + i)->obj.rend.is_active) {
+            count++;
+        }
+    }
+    return count;
+}
+
+
+static int Get_RandNum_1_to_9(void) {
+    static uint32_t x = 123456789;
+    x ^= x << 13;
+    x ^= x >> 17;
+    x ^= x << 5;
+    return (x % 9) + 1;
+}
 
 #endif
