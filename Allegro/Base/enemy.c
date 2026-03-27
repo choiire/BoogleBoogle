@@ -32,6 +32,7 @@ stENEMY* Enemy_Create(stENEMY* enemy, eENEMY_TYPE type, int x, int y) {
             stCOLLISION* coll = &obj->coll;
 
             obj->is_active = true;
+            obj->phy.is_gravity = true;
 
             coll->tag = eOBJ_TAG_ENEMY;
             coll->is_static = false;
