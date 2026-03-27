@@ -10,7 +10,6 @@
 #include <stdint.h>
 #include <math.h>
 #include <time.h>
-#include <stddef.h> 
 
 /************************************************/
 /*         Local Function Declaration           */
@@ -44,8 +43,8 @@ stENEMY* Enemy_Create(stENEMY* enemy, eENEMY_TYPE type, int x, int y) {
 
             phy->speed.x = 0;
             phy->speed.y = 0;
-            coll->box.width = PLAYER_W;          // temp val. it should change later
-            coll->box.height = PLAYER_W;         // temp val. it should change later
+            coll->box.width = PLAYER_W;
+            coll->box.height = PLAYER_W;
 
             phy->pos.x = x;
             phy->pos.y = y;
@@ -68,11 +67,9 @@ stENEMY* Enemy_Create(stENEMY* enemy, eENEMY_TYPE type, int x, int y) {
     return NULL; // fail to create. no room for pool
 }
 
-void Enemy_Update(stENEMY* e) {
+void Enemy_Update(stENEMY* e, stOBJECT* p, stOBJECT* t) {
     if (e == NULL) return;
 
-    // just maintain timer in Update func
-    // i thought it make simple
     e->state_timer++;
 
     switch (e->state) {
@@ -80,10 +77,10 @@ void Enemy_Update(stENEMY* e) {
         Enemy_UpdateIdle(e);
         break;
     case eENEMY_STATE_MOVE:
-        Enemy_UpdateMove(e);
+        Enemy_UpdateMove(e,p);
         break;
     case eENEMY_STATE_ATTACK:
-        Enemy_UpdateAttack(e);
+        Enemy_UpdateAttack(e,p,t);
         break;
     case eENEMY_STATE_TRAPPED:
         Enemy_UpdateTrapped(e);
@@ -93,6 +90,18 @@ void Enemy_Update(stENEMY* e) {
         break;
     default:
         break;
+    }
+}
+
+void Throw_Update(stOBJECT* throw, stOBJECT* target_player) {
+    int* t_active = &throw->rend.is_active;
+    stPOSITION* t_pos = &throw->phy.pos;
+
+    if (throw == NULL || !t_active) return;
+    Throw_MoveTowardPlayer(throw, target_player);
+    if (t_pos->x < 0 || t_pos->x > CONFIG_MAP_X_MAX ||
+        t_pos->y < 0 || t_pos->y > CONFIG_MAP_Y_MAX) {
+        t_active = false;
     }
 }
 
@@ -118,25 +127,32 @@ void Enemy_UpdateIdle(stENEMY* e) {
     Enemy_ChangeState(e, eENEMY_STATE_MOVE);
 }
 
-void Enemy_UpdateMove(stENEMY* e) {
+void Enemy_UpdateMove(stENEMY* e, stOBJECT* p) {
     if (e == NULL) return;
-
-    stPHYSICS* phy = &e->obj.phy;
-
-    phy->pos.x += phy->speed.x;
-    phy->pos.y += phy->speed.y;
+    switch (e->type) {
+    case 0: {
+        Enemy_ToPlayer_Ground(e, p);
+        break;
+    }
+    case 1: {
+        Enemy_ToPlayer_Fly(e, p);
+        break;
+    }
+    default:
+        break;
+    }
 }
 
 // only fly mob can attack
-void Enemy_UpdateAttack(stENEMY* e) {
+void Enemy_UpdateAttack(stENEMY* e, stOBJECT* p, stOBJECT* t) {
     if (e == NULL || e->type != eENEMY_TYPE_THROW) return;
     e->throw_timer = Get_RandNum_1_to_9();
-
+    if (e->throw_timer == 0) Enemy_Throw(e,p,t);
 }
 
 void Enemy_UpdateTrapped(stENEMY* e) {
     if (e == NULL) return;
-
+    e->trapped_timer++;
 }
 
 void Enemy_UpdateDead(stENEMY* e) {
@@ -198,7 +214,6 @@ void Enemy_ToPlayer_Ground(stENEMY* enemy, stOBJECT* target) {
         if (*e_look == 0) *e_look = 1;
         if (*e_look == 1) *e_look = 0;
     }
-#endif
 
     // jump logic
     if (enemy->state == eENEMY_STATE_MOVE) {
@@ -211,7 +226,6 @@ void Enemy_ToPlayer_Ground(stENEMY* enemy, stOBJECT* target) {
         }
     }
 
-#if 0
     // this part going to replace MOVE func that share with player
     e_pos->x += e_speed->x;
     e_pos->y += e_speed->y;
@@ -244,6 +258,7 @@ void Enemy_ToPlayer_Fly(stENEMY* enemy, stOBJECT* player) {
     if (e_speed->x == 0) e_speed->x = begin_speed * speed_mul;
     if (e_speed->y == 0) e_speed->y = begin_speed * speed_mul;
 
+#if 0
     // reflect on collision -> keep 45 degree
     if (IsHittingWall(e_pos->x + e_pos->x, e_pos->y)) {
         e_speed->x *= -1; // reflect left/right
@@ -256,6 +271,7 @@ void Enemy_ToPlayer_Fly(stENEMY* enemy, stOBJECT* player) {
         if (*e_look == 3) *e_look = 2;
     }
 
+#endif
     // this part going to replace MOVE func that share with player
     e_pos->x += e_speed->x;
     e_pos->y += e_speed->y;
@@ -263,48 +279,43 @@ void Enemy_ToPlayer_Fly(stENEMY* enemy, stOBJECT* player) {
 }
 
 
-void Enemy_Throw(stENEMY* e) {
+void Enemy_Throw(stENEMY* e, stOBJECT* p, stOBJECT* throw) {
     if (e == NULL) return;
     e->throw_timer = Get_RandNum_1_to_9();
-    
+    Throw_Create(throw, (int)e->obj.phy.pos.x, (int)e->obj.phy.pos.y);
     // create throw -> timer-- -> ....
 }
 
-stOBJECT* Throw_Create(stOBJECT* obj, int x, int y) {
+stOBJECT* Throw_Create(stOBJECT* throw, int x, int y) {
+    for (int i = 0; i < CONFIG_OBJECT_ENEMY_ATTACK_MAX; i++) {
+        stOBJECT* obj = &throw[i];
 
-    stPHYSICS* phy = &obj->phy;
-    stCOLLISION* coll = &obj->coll;
-    stRENDER* rend = &obj->rend;
+        if (!obj->is_active) {
+            //stOBJECT* obj = new_throw;
 
-    rend->is_active = true;
+            stPHYSICS* phy = &obj->phy;
+            stCOLLISION* coll = &obj->coll;
+            stRENDER* rend = &obj->rend;
 
-    phy->pos.x = x;
-    phy->pos.y = y;
-    phy->speed.x = 0;
-    phy->speed.y = 0;
+            rend->is_active = true;
 
-    coll->box.width = CONFIG_OBJECT_COLLISION_TILE_SIZE;
-    coll->box.height = CONFIG_OBJECT_COLLISION_TILE_SIZE;
-    coll->tag = eOBJ_TAG_ENEMY_ATTACK;
-    coll->is_static = false;
+            phy->pos.x = x;
+            phy->pos.y = y;
+            phy->speed.x = 0;
+            phy->speed.y = 0;
 
-    rend->is_active = 1;
+            coll->box.width = CONFIG_OBJECT_COLLISION_TILE_SIZE;
+            coll->box.height = CONFIG_OBJECT_COLLISION_TILE_SIZE;
+            coll->tag = eOBJ_TAG_ENEMY_ATTACK;
+            coll->is_static = false;
 
-    return obj;
-}
+            rend->is_active = 1;
 
-void Throw_Update(stOBJECT* throw, stOBJECT* target_player) {
-    int* t_active = &throw->rend.is_active;
-    stPOSITION* t_pos = &throw->phy.pos;
-
-    if (throw == NULL || !t_active) return;
-    Throw_MoveTowardPlayer(throw, target_player);
-    if (t_pos->x < 0 || t_pos->x > CONFIG_MAP_X_MAX ||
-        t_pos->y < 0 || t_pos->y > CONFIG_MAP_Y_MAX) {
-        t_active = false;
+            return obj;
+        }
     }
+    return NULL; // fail to create. no room for pool
 }
-
 
 void Throw_MoveTowardPlayer(stOBJECT* throw, stOBJECT* target_player) {
     stPOSITION* p_pos = &target_player->phy.pos;
