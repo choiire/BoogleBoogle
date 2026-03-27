@@ -241,7 +241,7 @@ static void enemy_easy_scale_disp(ALLEGRO_BITMAP* sprite, float px, float py, fl
     al_draw_scaled_bitmap(sprite, 0, 0, SPRITE_ENEMY_EASY, SPRITE_ENEMY_EASY, px, py, dw, dh, flags);
 }
 
-void enemy_hard_scale_disp(ALLEGRO_BITMAP* sprite, float px, float py, float dw, float dh, int flags) {
+static void enemy_hard_scale_disp(ALLEGRO_BITMAP* sprite, float px, float py, float dw, float dh, int flags) {
     al_draw_scaled_bitmap(sprite, 0, 0, SPRITE_ENEMY_HARD, SPRITE_ENEMY_HARD, px, py, dw, dh, flags);
 }
 static void enemy_throw_scale_disp(ALLEGRO_BITMAP* sprite, float px, float py, float dw, float dh, int flags) {
