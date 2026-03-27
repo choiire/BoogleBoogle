@@ -178,9 +178,7 @@ void Enemy_UpdateDead(stENEMY* e) {
 //    // - if infront of fall || go up wall
 //    // - if player high floor -> 5%chance jump
 //    if (m->state == ST_WALK && can_jump(m)) {
-//        if (!has_ground_ahead(map, m->x, m->y, m->dir) |
-//
-//            |
+//        if (!has_ground_ahead(map, m->x, m->y, m->dir) ||
 //            (p->y < m->y && rand() % 100 < 5)) { 
 //            m->vy = -JUMP_FORCE;
 //            m->state = ST_JUMP;
