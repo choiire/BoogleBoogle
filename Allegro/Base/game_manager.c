@@ -32,6 +32,11 @@ stPLAYER *GAME_MANAGER_GetPlayer(int player_id)
 	return &player[player_id];
 }
 
+stBUBBLE* GAME_MANAGER_GetBubble(void)
+{
+	return bubble;
+}
+
 stOBJECT* GAME_MANAGER_GetEnemyAttacks(void)
 {
 	return enemy_attack;
