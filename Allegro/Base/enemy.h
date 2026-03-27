@@ -27,7 +27,6 @@ typedef struct {
 	eENEMY_STATE	state;
 	
 	int state_timer;		// 
-	//int proximity_to_player;// just in case
 	int trapped_timer;		// count down of bubble escape
 	int throw_timer;		// 
 	bool is_angry;			// angry state
@@ -92,7 +91,9 @@ int Enemy_GetActiveCount(stENEMY* enemy);						// get number of active enemies
 
 // single enemy manage
 stENEMY* Enemy_Create(stENEMY* enemy, eENEMY_TYPE type, int x, int y);	// create n initialize an enemy
-//void Enemy_Destroy(stENEMY* enemy);							// destroy an enemy
+
+// for main update
+void Enemy_Update(stENEMY* enemy);								// update single enemy
 
 #if 0
 // state manage
@@ -116,8 +117,8 @@ void Enemy_Update(stENEMY* enemy, stENEMY* e);					// update single enemy
 void Enemy_UpdateAll(stENEMY* enemy);							// update all active enemies
 
 // AI n behavior
-void Enemy_ToPlayer_Ground(stENEMY* enemy, stPLAYER* player);	// move enemy toward the player
-void Enemy_ToPlayer_Fly(stENEMY* enemy, stPLAYER* player);		// move enemy toward the player
+void Enemy_ToPlayer_Ground(stENEMY* enemy, stOBJECT* target_player);	// move enemy toward the player
+void Enemy_ToPlayer_Fly(stENEMY* enemy, stOBJECT* target_player);		// move enemy toward the player
 
 // atomic actions
 void Enemy_Throw(stENEMY* enemy);								// make enemy Throw
