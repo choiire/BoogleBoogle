@@ -1,8 +1,7 @@
 #include "collision.h"
 
-
+// Need to Optimization
 void Collide_Object_Tile(stOBJECT* object, stTILE* tile) {
-
     double obj_w = object->coll.box.width;
     double obj_h = object->coll.box.height;
     double obj_x = object->phy.pos.x;
@@ -50,13 +49,12 @@ void Collide_Object_Tile(stOBJECT* object, stTILE* tile) {
             if (obj_x + obj_w <= tile_l && next_x + obj_w >= tile_l) {
                 object->phy.pos.x = tile_l - obj_w;
                 object->phy.speed.x = 0;
+
                 if (object->coll.tag == eOBJ_TAG_PLAYER) {
                     stPLAYER* p = (stPLAYER*)object;
-                    p->state = ePLAYER_STATE_IDLE;
                 }
                 else if (object->coll.tag == eOBJ_TAG_ENEMY) {
                     stENEMY* e = (stENEMY*)object;
-                    e->state = eENEMY_STATE_IDLE;
                 }
             }
         }
@@ -66,11 +64,9 @@ void Collide_Object_Tile(stOBJECT* object, stTILE* tile) {
                 object->phy.speed.x = 0;
                 if (object->coll.tag == eOBJ_TAG_PLAYER) {
                     stPLAYER* p = (stPLAYER*)object;
-                    p->state = ePLAYER_STATE_IDLE;
                 }
                 else if (object->coll.tag == eOBJ_TAG_ENEMY) {
                     stENEMY* e = (stENEMY*)object;
-                    e->state = eENEMY_STATE_IDLE;
                 }
             }
         }

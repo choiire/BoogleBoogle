@@ -35,7 +35,6 @@ void init_player(stPLAYER* player)
 		.is_jump = false,
 		.obj.is_active = true,
 		.obj.phy.is_gravity = true,
-		.obj.phy.is_move = false,
 		//.obj.rend,
 	};
 }
@@ -99,6 +98,9 @@ void player_update_frame(stPLAYER* player) {
 		return;
 	}
 #endif
+	if ((player->obj.phy.speed.x == 0) && (player->obj.phy.speed.y == 0)) {
+		player->state = ePLAYER_STATE_IDLE;
+	}
 
 	player->obj.phy.pos.x += player->obj.phy.speed.x;
 	player->obj.phy.pos.y += player->obj.phy.speed.y;
@@ -116,9 +118,9 @@ void player_update_frame(stPLAYER* player) {
 void player_debug(stPLAYER* player)
 {
 	printf("\n[PLAYER DATA]\
-			\n\tSTAT: { STAT: %d, IS_JUMP: %d, IS_MOVE: %d }\
+			\n\tSTAT: { STAT: %d, IS_JUMP: %d}\
 			\n\tPOS: { LOOK: %d, X: %f, Y: %f }\n",
-		player->state, player->is_jump, player->obj.phy.is_move,
+		player->state, player->is_jump,
 		player->obj.phy.look, player->obj.phy.pos.x, player->obj.phy.pos.y);
 }
 #endif
