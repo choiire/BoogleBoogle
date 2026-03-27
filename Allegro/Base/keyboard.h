@@ -15,6 +15,7 @@
 /************************************************/
 void init_keyboard(ALLEGRO_EVENT_QUEUE* queue);
 void keyboard_update(ALLEGRO_EVENT* event);
+eMAIN_STATE keyboard_processing_main(void);
 void keyboard_processing_ingame(void);
 
 #endif

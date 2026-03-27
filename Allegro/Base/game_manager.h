@@ -11,6 +11,8 @@
 /************************************************/
 /*          Global Function Declaration         */
 /************************************************/
+void GAME_MANAGER_SetGameState(eGAME_STATE state);
+void GAME_MANAGER_SetGameStage_Next(void);
 eGAME_STATE GAME_MANAGER_UpdateState(void);
 
 stPLAYER* GAME_MANAGER_GetPlayer(int player_id);

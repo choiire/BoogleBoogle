@@ -10,6 +10,16 @@
 /************************************************/
 /*         Local Variable Declaration           */
 /************************************************/
+
+typedef struct {
+	eGAME_STATE state;
+	eGAME_STAGE stage;
+	bool flag_next_stage;
+} stGAME_MANAGER;
+
+/************************************************/
+/*         Local Variable Definition            */
+/************************************************/
 /* Object Resourece */
 static stPLAYER player[CONFIG_OBJECT_PLAYER_MAX]; 
 static stBUBBLE bubble[CONFIG_OBJECT_BUBBLE_MAX];
@@ -17,19 +27,44 @@ static stENEMY enemy[CONFIG_OBJECT_ENEMY_MAX];
 static stOBJECT enemy_attack[CONFIG_OBJECT_ENEMY_ATTACK_MAX];
 static stTILE map[CONFIG_OBJECT_MAP_MAX];
 
-eGAME_STATE game_state = eGAME_STATE_MAIN;
+static stGAME_MANAGER game_manager;
 
 /************************************************/
 /*          Global Function Definition          */
 /************************************************/
+void GAME_MANAGER_SetGameState(eGAME_STATE state)
+{
+	game_manager.state = state;
+}
+
+void GAME_MANAGER_SetGameStage_Next(void)
+{
+	game_manager.state = eGAME_STATE_INGAME;
+	game_manager.flag_next_stage = true;
+}
+
 eGAME_STATE GAME_MANAGER_UpdateState(void)
 {
-	//TODO: Need to modify
-	if (game_state == eGAME_STATE_MAIN) {
-		GAME_MANAGER_SetStage(eGAME_STAGE_1);// Need To Condition
-		game_state = eGAME_STATE_INGAME;
+	switch (game_manager.state) {
+	case eGAME_STATE_MAIN:
+		break;
+	case eGAME_STATE_INGAME:
+		{
+			if (game_manager.flag_next_stage == true) {
+				GAME_MANAGER_SetStage(++game_manager.stage);// Need To Condition
+				game_manager.flag_next_stage = false;
+			}
+		}
+		break;
+	case eGAME_STATE_SCORE:
+		break;
+	case eGAME_STATE_END:
+		break;
+	default:
+		break;
 	}
-	return eGAME_STATE_INGAME;
+
+	return game_manager.state;
 }
 
 stPLAYER *GAME_MANAGER_GetPlayer(int player_id)

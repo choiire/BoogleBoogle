@@ -15,6 +15,8 @@
 /* Init Modules */
 ALLEGRO_EVENT_QUEUE* init_queue(void);
 ALLEGRO_TIMER* init_timer(ALLEGRO_EVENT_QUEUE* queue);
+int routine_game(eGAME_STATE game_state);
+void routine_main(void);
 void routine_ingame(void);
 
 /************************************************/
@@ -58,15 +60,16 @@ int main()
         switch (event.type)
         {
         case ALLEGRO_EVENT_TIMER:
-            if (game_state == eGAME_STATE_INGAME) {
-                routine_ingame();
+            {
+                done = routine_game(game_state);
+                redraw = true;
+                frames++;
             }
-
-            redraw = true;
-            frames++;
             break;
         case ALLEGRO_EVENT_DISPLAY_CLOSE:
-            done = true;
+            {
+                done = true;
+            }
             break;
         }
 
@@ -77,7 +80,7 @@ int main()
 
         if (redraw && al_is_event_queue_empty(queue))
         {
-            render_draw(game_state);
+            render_draw_ingame(game_state);
             redraw = false;
         }
     }
@@ -93,6 +96,37 @@ int main()
 /************************************************/
 /*          Local Function Definition           */
 /************************************************/
+static int routine_game(eGAME_STATE game_state)
+{
+    int done = false;
+
+    switch (game_state) {
+    case eGAME_STATE_MAIN:
+        routine_main();
+        break;
+    case eGAME_STATE_INGAME:
+        routine_ingame();
+        break;
+    case eGAME_STATE_SCORE:
+        break;
+    case eGAME_STATE_END:
+        done = true;
+        break;
+    default:
+        break;
+    }
+
+    return done;
+}
+
+static void routine_main(void)
+{
+    if (keyboard_processing_main() == eMAIN_STATE_START) {
+        GAME_MANAGER_SetGameStage_Next();
+    }
+    render_draw_main();
+}
+
 static void routine_ingame(void)
 {
     /* Set Player & Enemy State, Direction, Delta Pos */

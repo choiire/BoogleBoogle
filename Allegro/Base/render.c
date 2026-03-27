@@ -104,6 +104,7 @@ void render_enemy_easy_move(stENEMY* enemy);
 void render_enemy_hard_move(stENEMY* enemy);
 void render_enemy_throw_attack(stOBJECT* enemy_throw);
 void enemy_throw_scale_disp(ALLEGRO_BITMAP* sprite, float px, float py, float dw, float dh, int flags);
+static ALLEGRO_FONT* font;
 static ALLEGRO_DISPLAY* disp;
 static ALLEGRO_BITMAP* buffer;
 
@@ -119,6 +120,16 @@ SPRITES sprites;
 /************************************************/
 /*          Global Function Definition          */
 /************************************************/
+void render_draw_main(void)
+{
+    disp_pre_draw();
+    al_clear_to_color(al_map_rgb(0, 0, 0));
+
+    al_draw_text(font, al_map_rgb(255, 255, 255), BUFFER_W/2, BUFFER_H/2, 0, "Press Space Bar");
+
+    disp_post_draw();
+}
+
 void render_update_ingame(void)
 {
 
@@ -128,7 +139,7 @@ void render_update_ingame(void)
 #endif
 }
 
-void render_draw(eGAME_STATE state)
+void render_draw_ingame(eGAME_STATE state)
 {
 #if (DEBUG_PLAYER == 1)
     player_debug(GAME_MANAGER_GetPlayer(0));
@@ -151,7 +162,7 @@ void render_draw(eGAME_STATE state)
 
         test_render_heart(player->lives);
 
-        if (player->obj.is_active) {
+        if ((player->obj.is_active == true) && (player->invincible_timer % 10 == 0)) {
             render_player_move(player);
         }
         render_enemy_throw_attack(GAME_MANAGER_GetEnemyAttacks());
@@ -215,6 +226,9 @@ void disp_init()
     al_set_new_display_option(ALLEGRO_SAMPLE_BUFFERS, 1, ALLEGRO_SUGGEST);
     al_set_new_display_option(ALLEGRO_SAMPLES, 8, ALLEGRO_SUGGEST);
 
+    font = al_create_builtin_font();
+    must_init(font, "font");
+
     disp = al_create_display(DISP_W, DISP_H);
     must_init(disp, "display");
 
@@ -224,6 +238,7 @@ void disp_init()
 
 void disp_deinit()
 {
+    al_destroy_font(font);
     al_destroy_bitmap(buffer);
     al_destroy_display(disp);
 }

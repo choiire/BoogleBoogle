@@ -36,6 +36,11 @@ void keyboard_update(ALLEGRO_EVENT* event)
     }
 }
 
+eMAIN_STATE keyboard_processing_main(void)
+{
+    return key[ALLEGRO_KEY_SPACE] ? eMAIN_STATE_START : eMAIN_STATE_WAIT;
+}
+
 void keyboard_processing_ingame(void)
 {
     for (int iKeyInput = 0; iKeyInput < ALLEGRO_KEY_MAX; ++iKeyInput) {
