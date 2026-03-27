@@ -72,6 +72,20 @@ void GAME_MANAGER_CheckCollision(void)
 
 			Collide_Object_Tile(pPlayer, tile);
 		}
+		for (int i = 0; i < CONFIG_OBJECT_ENEMY_MAX; ++i) {
+			stOBJECT* obj = &enemy[i].obj;
+			if (obj->is_active == true) {
+				Collide_Object_Tile(obj, tile);
+			}
+		}
+	}
+
+	/* Collide_Enemy_Player */
+	for (int i = 0; i < CONFIG_OBJECT_ENEMY_MAX; ++i) {
+		stOBJECT* obj = &enemy[i].obj;
+		if (obj->is_active == true) {
+			Collide_Enemy_Player(obj, &player[0]);
+		}
 	}
 }
 
@@ -79,6 +93,14 @@ void GAME_MANAGER_UpdatePhysics(void)
 {
 	// TODO: Need to apply enemy
 	stOBJECT_UpdatePhysics(&player[0].obj);
+
+	for (int i = 0; i < CONFIG_OBJECT_ENEMY_MAX; ++i) {
+		stOBJECT* obj = &enemy[i].obj;
+		if (obj->is_active == true) {
+			stOBJECT_UpdatePhysics(obj);
+		}
+	}
+
 	bubble_update(bubble);
 }
 
