@@ -19,7 +19,7 @@ void Collide_Object_Tile(stOBJECT* object, stTILE* tile) {
     double tile_b = tile->obj.phy.pos.y + tile->obj.coll.box.height;
 
     bool is_y_overlap = (obj_y + obj_h > tile_t) && (obj_y < tile_b);
-    bool is_x_overlap = (obj_x + obj_w >= tile_l) && (obj_x <= tile_r);
+    bool is_x_overlap = (obj_x + obj_w > tile_l) && (obj_x < tile_r);
 
     /* Check Y Position */
     if (is_x_overlap) {
