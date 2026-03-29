@@ -149,6 +149,10 @@ void GAME_MANAGER_UpdateObject(void)
 {
 	player_update_frame(&player[0]);
 	bubble_update_frame(bubble);
+
+	// i wrote it here cause it's obj.... is correct...?
+	Enemy_Update_ALL(enemy, player, enemy_attack);
+	Throw_Update_ALL(enemy, player, enemy_attack);
 }
 
 /************************************************/
