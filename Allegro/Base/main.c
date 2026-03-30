@@ -17,10 +17,10 @@ ALLEGRO_EVENT_QUEUE* init_queue(void);
 ALLEGRO_TIMER* init_timer(ALLEGRO_EVENT_QUEUE* queue);
 
 /* Main Routine */
-int routine_game(eGAME_STATE game_state);
+int routine_game(ALLEGRO_EVENT_QUEUE* queue, eGAME_STATE game_state);
 /* Sub Routine */
 void routine_main(void);
-void routine_ingame(void);
+void routine_ingame(ALLEGRO_EVENT_QUEUE* queue);
 void routine_score(void);
 
 /************************************************/
@@ -64,7 +64,7 @@ int main()
         {
         case ALLEGRO_EVENT_TIMER:
             {
-                done = routine_game(game_state);
+                done = routine_game(queue, game_state);
                 frames++;
             }
             break;
@@ -92,7 +92,7 @@ int main()
 /************************************************/
 /*          Local Function Definition           */
 /************************************************/
-static int routine_game(eGAME_STATE game_state)
+static int routine_game(ALLEGRO_EVENT_QUEUE* queue, eGAME_STATE game_state)
 {
     int done = false;
 
@@ -101,7 +101,7 @@ static int routine_game(eGAME_STATE game_state)
         routine_main();
         break;
     case eGAME_STATE_INGAME:
-        routine_ingame();
+        routine_ingame(queue);
         break;
     case eGAME_STATE_SCORE:
         routine_score();
@@ -124,7 +124,7 @@ static void routine_main(void)
     render_draw_main();
 }
 
-static void routine_ingame(void)
+static void routine_ingame(ALLEGRO_EVENT_QUEUE* queue)
 {
     if (GAME_MANAGER_IsLoading() == false) {
         /* Set Player & Enemy State, Direction, Delta Pos */
@@ -138,7 +138,9 @@ static void routine_ingame(void)
     }
 
     /* Rendering */
-    render_draw_ingame();
+    if (al_is_event_queue_empty(queue)) {
+        render_draw_ingame();
+    }
     /* Update Stage */
     GAME_MANAGER_UpdateStage();
     

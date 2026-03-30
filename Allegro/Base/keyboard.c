@@ -51,6 +51,9 @@ void keyboard_processing_ingame(void)
         case ALLEGRO_KEY_DOWN:
         case ALLEGRO_KEY_SPACE:
         {
+            if (iKeyInput == ALLEGRO_KEY_DOWN && !(key[iKeyInput] & KEY_SEEN))
+                break;
+
             if (key[iKeyInput]) {
                 player_update_input(GAME_MANAGER_GetPlayer(0), iKeyInput, key[iKeyInput]);
             }

@@ -149,8 +149,6 @@ int GAME_MANAGER_GetScore(void)
 			break;
 	}
 
-	printf("Total Score: %d\n", total_score);
-
 	return total_score;
 }
 
