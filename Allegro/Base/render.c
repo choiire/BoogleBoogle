@@ -15,13 +15,10 @@
 
 #define ZERO (0)
 #define TITLE_X (224)
-#define FLAG_0 (0)
 #define TITLE_W (176)
 #define TITLE_H (145)
 #define SCALE_TITLE_W (80)
 #define SCALE_TITLE_H (60)
-#define TEXT_X (100)
-#define TEXT_Y (215)
 #define MAP (28)
 #define SCALE (10)
 #define SCALE_ATTACK (5)
@@ -99,8 +96,6 @@ typedef struct SPRITES
 /************************************************/
 /*         Local Function Declaration           */
 /************************************************/
-void disp_pre_draw();
-void disp_post_draw();
 void render_heart();
 void test_disp(float x, float y);
 void test_scale_disp(float dx, float dy, float dw, float dh, int flags);
@@ -176,7 +171,7 @@ void render_draw_ingame(void)
     stPLAYER* player = GAME_MANAGER_GetPlayer(0);
 
     test_render_heart(player->lives);
-    al_draw_textf(font, al_map_rgb(255, 255, 255), 10, 0, 0, "score %04d", 1234);
+    al_draw_textf(font, al_map_rgb(255, 255, 255), 10, 0, 0, "score %04d", GAME_MANAGER_GetScore());
     if ((player->obj.is_active == true) && (player->invincible_timer % 10 == 0)) 
     {
         switch (player->state)
@@ -273,21 +268,22 @@ void disp_deinit()
     al_destroy_display(disp);
 }
 
-/************************************************/
-/*          Local Function Definition           */
-/************************************************/
-static void disp_pre_draw()
+void disp_pre_draw()
 {
     al_set_target_bitmap(buffer);
 }
 
-static void disp_post_draw()
+void disp_post_draw()
 {
     al_set_target_backbuffer(disp); // 스케일 업된 버퍼 지정
     al_draw_scaled_bitmap(buffer, 0, 0, BUFFER_W, BUFFER_H, 0, 0, DISP_W, DISP_H, 0);   // 스케일 업
 
     al_flip_display(); // 스케일 업된 버퍼를 실제 화면에 그림
 }
+
+/************************************************/
+/*          Local Function Definition           */
+/************************************************/
 
 static void test_disp(float x, float y)
 {

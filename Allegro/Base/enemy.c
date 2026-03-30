@@ -202,7 +202,23 @@ void Enemy_UpdateAttack(stENEMY* e, stOBJECT* p, stOBJECT* t) {
 
 void Enemy_UpdateTrapped(stENEMY* e) {
     if (e == NULL) return;
-    e->trapped_timer++;
+    e->trapped_timer--;
+    if (e->trapped_timer == 0) {
+        e->state = eENEMY_STATE_MOVE;
+        e->is_angry = true;
+
+        switch (e->type) {
+        case eENEMY_TYPE_BASIC:
+            e->trapped_timer = ENEMY_BASIC_TRAPPED_TIMER;
+            break;
+        case eENEMY_TYPE_THROW:
+            e->trapped_timer = ENEMY_THROW_TRAPPED_TIMER;
+            break;
+        case eENEMY_TYPE_BOSS:
+            e->trapped_timer = ENEMY_BOSS_TRAPPED_TIMER;
+            break;
+        }
+    }
 }
 
 void Enemy_ToPlayer_Ground(stENEMY* enemy, stOBJECT* target) {

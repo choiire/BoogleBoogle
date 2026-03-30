@@ -1,8 +1,3 @@
-
-#include "score.h"
-#include "bugglebuggle.h"
-#include "sqlite3.h"
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -13,11 +8,12 @@
 #include <allegro5/allegro_primitives.h>
 #include <allegro5/allegro_image.h>
 
+#include "score.h"
+#include "bugglebuggle.h"
+#include "sqlite3.h"
 #include "render.h"
-#include "render.c"
 
-
-void Score_Add(stSCORE* score_manager) {
+void Score_Add(ALLEGRO_FONT* font, stSCORE* score_manager) {
     sqlite3* db;
     char* err_msg = 0;
     int rc;
@@ -49,7 +45,7 @@ void Score_Add(stSCORE* score_manager) {
 
 }
 
-stBOARD* Score_Get(stSCORE* score_manager, stBOARD* leaderboard) {
+stBOARD* Score_Get(ALLEGRO_FONT* font, stSCORE* score_manager, stBOARD* leaderboard) {
     sqlite3* db;
     char* err_msg = 0;
     int rc;
@@ -84,7 +80,7 @@ stBOARD* Score_Get(stSCORE* score_manager, stBOARD* leaderboard) {
     return leaderboard;
 }
 
-void Score_Print(stSCORE* score_manager, stBOARD* leaderboard) {
+void Score_Print(ALLEGRO_FONT* font, stSCORE* score_manager, stBOARD* leaderboard) {
 
     disp_pre_draw();
     al_clear_to_color(al_map_rgb(0, 0, 0));
@@ -99,7 +95,7 @@ void Score_Print(stSCORE* score_manager, stBOARD* leaderboard) {
 }
 
 
-void Score_Test() {
+void Score_Test(ALLEGRO_FONT* font) {
 
     disp_pre_draw();
     al_clear_to_color(al_map_rgb(0, 0, 0));
@@ -157,7 +153,3 @@ void Score_Test() {
 
     disp_post_draw();
 }
-
-
-
-

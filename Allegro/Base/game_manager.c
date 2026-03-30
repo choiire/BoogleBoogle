@@ -26,6 +26,7 @@ typedef struct {
 /*         Local Function Declaration           */
 /************************************************/
 void GAME_MANAGER_SetStage(eGAME_STAGE stage);
+void GAME_MANAGER_UpdateLoading(void);
 
 /************************************************/
 /*         Local Variable Definition            */
@@ -44,17 +45,7 @@ static stGAME_MANAGER game_manager;
 /************************************************/
 eGAME_STATE GAME_MANAGER_UpdateState(void)
 {
-	static int cnt_is_loading;
-
-	if (game_manager.is_loading == true) {
-		cnt_is_loading++;
-		if (cnt_is_loading >= CONFIG_SYSTEM_LOADING_DELAY) {
-			game_manager.is_loading = false;
-		}
-	}
-	else {
-		cnt_is_loading = 0;
-	}
+	GAME_MANAGER_UpdateLoading();
 
 	switch (game_manager.state) {
 	case eGAME_STATE_MAIN:
@@ -138,7 +129,24 @@ void GAME_MANAGER_UpdateStage(void)
 
 int GAME_MANAGER_GetScore(void)
 {
-	//TODO: 
+	int total_score = 0;
+	for (int iStage = 0; iStage < eGAME_STAGE_MAX; ++iStage) {
+		stSTAGE_INFO* info = &game_manager.stage_info[iStage];
+
+		total_score += info->enemy_el[eENEMY_TYPE_BASIC] * 100;
+		total_score += info->enemy_el[eENEMY_TYPE_THROW] * 200;
+		
+		if (game_manager.state == eGAME_STATE_SCORE) {
+			total_score += info->player_lives * 500;
+		}
+
+		if (info->is_player_dead)
+			break;
+	}
+
+	printf("Total Score: %d\n", total_score);
+
+	return total_score;
 }
 
 bool GAME_MANAGER_IsLoading(void)
@@ -301,5 +309,20 @@ static void GAME_MANAGER_SetStage(eGAME_STAGE stage)
 			continue;
 
 		info->enemy_max[pEnemy->type]++;
+	}
+}
+
+void GAME_MANAGER_UpdateLoading(void)
+{
+	static int cnt_is_loading;
+
+	if (game_manager.is_loading == true) {
+		cnt_is_loading++;
+		if (cnt_is_loading >= CONFIG_SYSTEM_LOADING_DELAY) {
+			game_manager.is_loading = false;
+		}
+	}
+	else {
+		cnt_is_loading = 0;
 	}
 }

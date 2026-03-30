@@ -29,14 +29,14 @@ typedef struct {
 stBOARD* leaderboard[11];
 
 
-void Score_Test();
+void Score_Test(ALLEGRO_FONT* font);
 
 //void Score_Create(char* name, int score);
 
-void Score_Add(stSCORE* score_manager);
+void Score_Add(ALLEGRO_FONT* font, stSCORE* score_manager);
 
-stBOARD* Score_Get(stSCORE* score_manager, stBOARD* leaderboard);
+stBOARD* Score_Get(ALLEGRO_FONT* font, stSCORE* score_manager, stBOARD* leaderboard);
 
-void Score_Print(stSCORE* score_manager, stBOARD* leaderboard);
+void Score_Print(ALLEGRO_FONT* font, stSCORE* score_manager, stBOARD* leaderboard);
 
 #endif
