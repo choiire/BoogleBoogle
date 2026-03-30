@@ -48,6 +48,9 @@ eGAME_STATE GAME_MANAGER_UpdateState(void)
 	case eGAME_STATE_INGAME:
 	{
 		if (game_manager.flag_next_stage == true) {
+			if (game_manager.stage >= eGAME_STAGE_MAX)
+				break;
+
 			GAME_MANAGER_SetStage(++game_manager.stage);// Need To Condition
 			game_manager.flag_next_stage = false;
 		}
@@ -181,9 +184,12 @@ void GAME_MANAGER_CheckCollision(void)
 		}
 	}
 
-	/* enemy throw add later */
-
-
+	/* enemy throw */
+	for (int iThrow = 0; iThrow < CONFIG_OBJECT_ENEMY_ATTACK_MAX; ++iThrow) {
+		if (enemy_attack[iThrow].is_active == true) {
+			Collide_Enemy_Player(&enemy_attack[iThrow], &player[0]);
+		}
+	}
 
 	/* Collide_Object_Bubble */ 
 
