@@ -17,7 +17,8 @@ void init_render(ALLEGRO_EVENT_QUEUE* queue);
 void render_draw_main(void);
 void render_draw_ingame(void);
 void deinit_render();
-
+void render_draw_game_end(void);
+void render_draw_game_over(void);
 void disp_pre_draw();
 void disp_post_draw();
 

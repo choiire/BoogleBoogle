@@ -153,7 +153,11 @@ static void routine_ingame(ALLEGRO_EVENT_QUEUE* queue)
 
 static void routine_score(void)
 {
-    // TODO:
+    if (GAME_MANAGER_IsLoading() == true) {
+        // Draw Gameover
+        render_draw_game_end();
+        return;
+    }
 }
 
 static ALLEGRO_EVENT_QUEUE* init_queue(void)
