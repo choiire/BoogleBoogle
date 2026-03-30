@@ -15,9 +15,15 @@
 /************************************************/
 
 #define ZERO (0)
+#define WHITE (255)
 #define TITLE_X (224)
 #define TITLE_W (176)
 #define TITLE_H (145)
+#define GAME_END_X (128)
+#define GAME_OVER_X (124)
+#define CUR_STAGE (264)
+#define STAGE_TEXT_X (137)
+#define STAGE_TEXT_Y (116)
 #define SCALE_TITLE_W (80)
 #define SCALE_TITLE_H (60)
 #define MAP (28)
@@ -160,6 +166,27 @@ void render_draw_main(void)
     disp_post_draw();
 }
 
+void render_draw_game_end(void)
+{
+    disp_pre_draw();
+    al_clear_to_color(al_map_rgb(0, 0, 0));
+
+
+    al_draw_text(font, al_map_rgb(255, 255, 255), GAME_END_X, STAGE_TEXT_Y, FLAG_0, "Game End");
+
+    disp_post_draw();
+}
+
+void render_draw_game_over(void) {
+    disp_pre_draw();
+    al_clear_to_color(al_map_rgb(0, 0, 0));
+
+
+    al_draw_text(font, al_map_rgb(255, 255, 255), GAME_OVER_X, STAGE_TEXT_Y, FLAG_0, "Game Over");
+
+    disp_post_draw();
+}
+
 void render_draw_ingame(void)
 {
 #if (DEBUG_PLAYER == 1)
@@ -175,7 +202,7 @@ void render_draw_ingame(void)
     stPLAYER* player = GAME_MANAGER_GetPlayer(0);
 
     test_render_heart(player->lives);
-    al_draw_textf(font, al_map_rgb(255, 255, 255), 10, 0, 0, "score %04d", GAME_MANAGER_GetScore());
+    al_draw_textf(font, al_map_rgb(WHITE, WHITE, WHITE), 10, 0, 0, "score %04d", GAME_MANAGER_GetScore());
     
     render_loading(GAME_MANAGER_GetGameStage());
     render_stage(GAME_MANAGER_GetGameStage());
@@ -252,6 +279,7 @@ void render_draw_ingame(void)
             render_enemy_easy_move(enemy);
         }*/
     }
+    
     disp_post_draw();
 }
 
@@ -773,13 +801,13 @@ static void render_loading(eGAME_STAGE stage) {
     if (GAME_MANAGER_IsLoading() == true) {
         switch (stage) {
         case eGAME_STAGE_1:
-            al_draw_text(font, al_map_rgb(255, 255, 255), TEXT_X, TEXT_Y, FLAG_0, "STAGE 1");
+            al_draw_text(font, al_map_rgb(WHITE, WHITE, WHITE), STAGE_TEXT_X, STAGE_TEXT_Y, FLAG_0, "STAGE 1");
             break;
         case eGAME_STAGE_2:
-            al_draw_text(font, al_map_rgb(255, 255, 255), TEXT_X, TEXT_Y, FLAG_0, "STAGE 2");
+            al_draw_text(font, al_map_rgb(WHITE, WHITE, WHITE), STAGE_TEXT_X, STAGE_TEXT_Y, FLAG_0, "STAGE 2");
             break;
         case eGAME_STAGE_3:
-            al_draw_text(font, al_map_rgb(255, 255, 255), TEXT_X, TEXT_Y, FLAG_0, "STAGE 3");
+            al_draw_text(font, al_map_rgb(WHITE, WHITE, WHITE), STAGE_TEXT_X, STAGE_TEXT_Y, FLAG_0, "STAGE 3");
             break;
         }
     
@@ -789,13 +817,13 @@ static void render_loading(eGAME_STAGE stage) {
 static void render_stage(eGAME_STAGE stage) {
     switch (stage) {
     case eGAME_STAGE_1:
-        al_draw_text(font, al_map_rgb(255, 255, 255), 264, 0, FLAG_0, "STAGE 1");
+        al_draw_text(font, al_map_rgb(WHITE, WHITE, WHITE), CUR_STAGE, 0, FLAG_0, "STAGE 1");
         break;
     case eGAME_STAGE_2:
-        al_draw_text(font, al_map_rgb(255, 255, 255), 264, 0, FLAG_0, "STAGE 2");
+        al_draw_text(font, al_map_rgb(WHITE, WHITE, WHITE), CUR_STAGE, 0, FLAG_0, "STAGE 2");
         break;
     case eGAME_STAGE_3:
-        al_draw_text(font, al_map_rgb(255, 255, 255), 264, 0, FLAG_0, "STAGE 3");
+        al_draw_text(font, al_map_rgb(WHITE, WHITE, WHITE), CUR_STAGE, 0, FLAG_0, "STAGE 3");
         break;
     default:
         break;
