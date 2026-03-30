@@ -48,7 +48,12 @@ eGAME_STATE GAME_MANAGER_UpdateState(void)
 	case eGAME_STATE_INGAME:
 	{
 		if (game_manager.flag_next_stage == true) {
-			GAME_MANAGER_SetStage(++game_manager.stage);// Need To Condition
+			if (++game_manager.stage == eGAME_STAGE_MAX) {
+				// TODO: Jump to Score
+				break;
+			}
+
+			GAME_MANAGER_SetStage(game_manager.stage);// Need To Condition
 			game_manager.flag_next_stage = false;
 		}
 	}
