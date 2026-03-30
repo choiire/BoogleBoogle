@@ -170,7 +170,7 @@ static void routine_name(ALLEGRO_EVENT_QUEUE* queue)
 
     if (keyboard_processing_name()) {
         GAME_MANAGER_SetGameState(eGAME_STATE_SCORE);
-        //render_draw_main();
+        render_draw_score();
     }
 }
 
@@ -180,7 +180,6 @@ static void routine_score(ALLEGRO_EVENT_QUEUE* queue)
         return;
 
     if (al_is_event_queue_empty(queue)) {
-        render_draw_score();
     }
     if (keyboard_processing_score()) {
         GAME_MANAGER_SetGameState(eGAME_STATE_MAIN);

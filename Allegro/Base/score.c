@@ -74,7 +74,7 @@ stBOARD* Score_Get(void) {
         while (sqlite3_step(res) == SQLITE_ROW) {
             stBOARD* board = &leaderboard[i];
             board->rank = i;
-            strcpy_s(board->player_name, PLAYER_NAME_MAX, sqlite3_column_text(res, 0));
+            strcpy_s(board->player_name, CONFIG_SYSTEM_PLAYER_NAME_MAX, sqlite3_column_text(res, 0));
             board->score = sqlite3_column_int(res, 1);
 
             dx += 20;

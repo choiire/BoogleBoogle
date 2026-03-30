@@ -8,6 +8,7 @@
 #include "render.h"
 #include "map.h"
 #include "score.h"
+#include "keyboard.h"
 #include "game_manager.h"
 
 /************************************************/
@@ -284,7 +285,7 @@ void render_draw_ingame(void)
 
 void render_draw_score(void)
 {
-    Score_Add(font, "IRE", 1234);
+    Score_Add(font, keboard_get_name(), GAME_MANAGER_GetScore());
     Score_Get();
     Score_Print(font, GAME_MANAGER_GetStageInfo());
 }

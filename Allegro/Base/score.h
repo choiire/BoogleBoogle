@@ -5,12 +5,11 @@
 #include "object.h"
 #include "enemy.h"
 
-#define PLAYER_NAME_MAX (12)
 #define STAGE_NUM_TOT (3)
 
 #if 0
 typedef struct {
-	char* player_name[PLAYER_NAME_MAX];
+	char* player_name[CONFIG_SYSTEM_PLAYER_NAME_MAX];
 	int score;				// curr point
 	int stage;				// curr stage num
 	int lives;				// num of lives
@@ -34,7 +33,7 @@ typedef struct {
 
 typedef struct {
 	int rank;
-	char player_name[PLAYER_NAME_MAX];
+	char player_name[CONFIG_SYSTEM_PLAYER_NAME_MAX];
 	int score;
 } stBOARD;
 

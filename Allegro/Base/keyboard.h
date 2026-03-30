@@ -20,6 +20,8 @@ void keyboard_processing_ingame(void);
 bool keyboard_processing_name(void);
 bool keyboard_processing_score(void);
 
+const char* keboard_get_name(void);
+
 #if (DEBUG_STAGE == 1)
 bool test_next_stage_input(void);
 #endif
