@@ -17,7 +17,7 @@
 
 
 #define ENEMY_BASIC_SPEED           (1.2f)
-#define ENEMY_BASIC_SPEED_ANGRY     (1.5f)
+#define ENEMY_BASIC_SPEED_ANGRY     (1.4f)
 #define ENEMY_BASIC_JUMP            (-4.2f)
 #define ENEMY_BASIC_JUMP_CHANCE     (5) // 1 to 9
 #define ENEMY_THROW_SPEED           (0.8f)
