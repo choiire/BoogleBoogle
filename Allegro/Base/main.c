@@ -162,8 +162,11 @@ static void routine_ingame(ALLEGRO_EVENT_QUEUE* queue)
 
 static void routine_name(ALLEGRO_EVENT_QUEUE* queue)
 {
-    if (GAME_MANAGER_IsLoading() == true)
+    if (GAME_MANAGER_IsLoading() == true) {
+        // Draw Gameover
+        render_draw_game_end();
         return;
+    }
 
     if (keyboard_processing_name()) {
         GAME_MANAGER_SetGameState(eGAME_STATE_SCORE);
@@ -173,11 +176,9 @@ static void routine_name(ALLEGRO_EVENT_QUEUE* queue)
 
 static void routine_score(ALLEGRO_EVENT_QUEUE* queue)
 {
-    if (GAME_MANAGER_IsLoading() == true) {
-        // Draw Gameover
-        render_draw_game_end();
+    if (GAME_MANAGER_IsLoading() == true)
         return;
-    }
+
     if (al_is_event_queue_empty(queue)) {
         render_draw_score();
     }

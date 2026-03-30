@@ -127,7 +127,7 @@ void GAME_MANAGER_UpdateStage(void)
 		return;
 	}
 	if (info->is_player_dead) {
-		GAME_MANAGER_SetGameState(eGAME_STATE_SCORE);
+		GAME_MANAGER_SetGameState(eGAME_STATE_NAME);
 		return;
 	}
 }
