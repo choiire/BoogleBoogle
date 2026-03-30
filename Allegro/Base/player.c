@@ -28,7 +28,7 @@ void init_player(stPLAYER* player)
 #endif
 		.state = ePLAYER_STATE_IDLE,
 		.shot_timer = 0,
-		.lives = 3,
+		.lives = CONFIG_GAME_PLAYER_HEART_MAX,
 		.invincible_timer = 0,
 		.obj.is_active = true,
 		.obj.phy.is_gravity = true,

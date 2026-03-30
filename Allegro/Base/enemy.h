@@ -17,7 +17,8 @@ typedef enum {
 typedef enum {
 	eENEMY_TYPE_BASIC = 0,	// normal mob
 	eENEMY_TYPE_THROW,		// throw mob
-	eENEMY_TYPE_BOSS		// boss mob
+	eENEMY_TYPE_BOSS,		// boss mob
+	eENEMY_TYPE_MAX
 }eENEMY_TYPE;
 
 typedef struct {

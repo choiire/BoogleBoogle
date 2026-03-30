@@ -10,7 +10,7 @@ typedef enum {
 	ePLAYER_STATE_ATTACK,
 	ePLAYER_STATE_DEAD,
 	ePLAYER_STATE_MAX
-}ePLAYER_STATE;
+} ePLAYER_STATE;
 
 typedef struct {
 	/* OBJECT */

@@ -9,7 +9,10 @@
 #define DEBUG_STAGE								(1)
 
 /* System Config */
-#define CONFIG_SYSTEM_GAME_FRAME				(60)
+#define CONFIG_SYSTEM_FRAME						(60)
+
+/* Game Config */
+#define CONFIG_GAME_PLAYER_HEART_MAX			(3)
 
 /* MAP Config */
 #define CONFIG_MAP_X_MAX						(36)

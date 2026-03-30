@@ -9,12 +9,30 @@
 #include "enemy.h"
 
 /************************************************/
+/*         Global Variable Declaration          */
+/************************************************/
+typedef struct {
+	bool is_player_dead;
+	int player_lives;
+
+	/* eliminated eneymy */
+	int enemy_remain;
+	int enemy_el[eENEMY_TYPE_MAX];
+	int enemy_max[eENEMY_TYPE_MAX];
+
+	int stage_frame;
+} stSTAGE_INFO;
+
+/************************************************/
 /*          Global Function Declaration         */
 /************************************************/
 /* Game State */
 eGAME_STATE GAME_MANAGER_UpdateState(void);
 void GAME_MANAGER_SetGameState(eGAME_STATE state);
 void GAME_MANAGER_SetGameStage_Next(void);
+void GAME_MANAGER_UpdateStage(void);
+const stSTAGE_INFO* GAME_MANAGER_GetStageInfo(eGAME_STAGE stage);
+int GAME_MANAGER_GetScore(void);
 
 /* Request Resource */
 stPLAYER* GAME_MANAGER_GetPlayer(int player_id);

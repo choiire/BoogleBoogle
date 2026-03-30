@@ -1,3 +1,4 @@
+#include <string.h>
 #include "game_manager.h"
 #include "collision.h"
 #include "player.h"
@@ -14,6 +15,7 @@
 typedef struct {
 	eGAME_STATE state;
 	eGAME_STAGE stage;
+	stSTAGE_INFO stage_info[eGAME_STAGE_MAX];
 	bool flag_next_stage;
 } stGAME_MANAGER;
 
@@ -70,6 +72,49 @@ void GAME_MANAGER_SetGameStage_Next(void)
 {
 	game_manager.state = eGAME_STATE_INGAME;
 	game_manager.flag_next_stage = true;
+}
+
+void GAME_MANAGER_UpdateStage(void)
+{
+	stSTAGE_INFO* info = &game_manager.stage_info[game_manager.stage];
+	stPLAYER* pPlayer = &player[0];
+
+	info->is_player_dead = pPlayer->state == ePLAYER_STATE_DEAD;
+	info->player_lives = pPlayer->lives;
+
+	info->enemy_remain = 0;
+	for (int i = 0; i < CONFIG_OBJECT_ENEMY_MAX; ++i) {
+		stENEMY* pEnemy = &enemy[i];
+		if (pEnemy->obj.is_active == false)
+			continue;
+
+		info->enemy_el[pEnemy->type]++;
+		info->enemy_remain++;
+	}
+	for (int iType = 0; iType < eENEMY_TYPE_MAX; ++iType) {
+		info->enemy_el[iType] = info->enemy_max[iType] - info->enemy_el[iType];
+	}
+
+	info->stage_frame++;
+
+	if (info->is_player_dead) {
+		/* TODO: Go to Score */
+		return;
+	}
+	if (info->enemy_remain <= 0) {
+		/* TODO: Go to Next Stage */
+		return;
+	}
+}
+
+int GAME_MANAGER_GetScore(void)
+{
+	//TODO: 
+}
+
+const stSTAGE_INFO* GAME_MANAGER_GetStageInfo(eGAME_STAGE stage)
+{
+	return &game_manager.stage_info[stage];
 }
 
 stPLAYER *GAME_MANAGER_GetPlayer(int player_id)
@@ -182,6 +227,9 @@ void GAME_MANAGER_UpdateObject(void)
 /************************************************/
 static void GAME_MANAGER_SetStage(eGAME_STAGE stage)
 {
+	stSTAGE_INFO* info = &game_manager.stage_info[stage];
+	memset(info, 0x00, sizeof(stSTAGE_INFO));
+	
 	switch (stage) {
 	case eGAME_STAGE_1:
 		{
@@ -195,5 +243,15 @@ static void GAME_MANAGER_SetStage(eGAME_STAGE stage)
 		break;
 	default:
 		break;
+	}
+
+	/* Initialize Stage Info */
+	info->player_lives = player[0].lives;
+	for (int i = 0; i < CONFIG_OBJECT_ENEMY_MAX; ++i) {
+		stENEMY* pEnemy = &enemy[i];
+		if (pEnemy->obj.is_active == false)
+			continue;
+
+		info->enemy_max[pEnemy->type]++;
 	}
 }
