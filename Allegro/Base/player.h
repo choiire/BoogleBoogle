@@ -22,8 +22,13 @@ typedef struct {
 	int attack_timer;
 } stPLAYER;
 
+/* Initialize the player's attributes and spawn position */
 void init_player(stPLAYER* player);
+
+/* Handle player movement and action inputs */
 void player_update_input(stPLAYER* player, int allegro_key, unsigned char flag);
+
+/* Update player timers and internal states */
 void player_update_frame(stPLAYER* player);
 
 #if (DEBUG_PLAYER == 1)

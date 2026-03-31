@@ -26,9 +26,16 @@ typedef struct _bubble
     eBUBBLE_STATE state;
 } stBUBBLE;
 
+/* Initialize the bubble pool */
 void bubble_init(stBUBBLE* bubbles);
+
+/* Create a new bubble at player position */
 bool bubble_add(stPLAYER* player, stBUBBLE* bubbles);
+
+/* Manage bubble states and life timers */
 void bubble_update(stBUBBLE* bubbles);
+
+/* Update movement and animation frames */
 void bubble_update_frame(stBUBBLE* bubbles);
 
 
