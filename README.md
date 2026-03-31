@@ -46,7 +46,7 @@
     - [`keyboard_processing_ingame`](#keyboard_processing_ingame)
     - [`keyboard_processing_name`](#keyboard_processing_name)
     - [`keyboard_processing_score`](#keyboard_processing_score)
-    - [`keboard_get_name`](#keboard_get_name)
+    - [`keyboard_get_name`](#keyboard_get_name)
   - [Physics \& Collision](#physics--collision)
     - [`stOBJECT_UpdatePhysics`](#stobject_updatephysics)
     - [`Collide_Object_Tile`](#collide_object_tile)
