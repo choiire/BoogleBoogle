@@ -1,21 +1,25 @@
 #include <allegro5/allegro5.h>
 
 #include "player.h"
-#include "collision.h"
 #include "game_manager.h"
 
-// --- player ---
+/* Player Movement Settings */
+#define PLAYER_SPEED             (2.0)
+#define CONFIG_PLAYER_TILE_DOWN  (3)
 
-// fix it later
-const static double PLAYER_SPEED = 2.0;
-#define REND_DURATION		(10)
-#define BUBBLE_COOL_TIME	(20)
+/* Animation & Combat Timing */
+#define REND_DURATION            (10)
+#define BUBBLE_COOL_TIME         (20)
+
+/* Spawn Configuration */
+#define PLAYER_SPAWN_X           (15.0)
+#define PLAYER_SPAWN_Y           (210.0)
 
 
 void init_player(stPLAYER* player)
 {
 	*player = (stPLAYER){
-		.obj.coll.box.height = CONFIG_COLLISION_TILE_SIZE, // fix it later
+		.obj.coll.box.height = CONFIG_COLLISION_TILE_SIZE, 
 		.obj.coll.box.width = CONFIG_COLLISION_TILE_SIZE,
 		.obj.coll.is_static = false,
 		.obj.coll.tag = eOBJ_TAG_PLAYER,
@@ -23,11 +27,11 @@ void init_player(stPLAYER* player)
 		.obj.phy.speed.x = 0.0,
 		.obj.phy.speed.y = 0.0,
 #if 0
-		.obj.phy.pos.x = 10.0, // init pos, fix it later
+		.obj.phy.pos.x = 10.0, 
 		.obj.phy.pos.y = 220.0,
 #else
-		.obj.phy.pos.x = 15.0, // init pos, fix it later
-		.obj.phy.pos.y = 210.0,
+		.obj.phy.pos.x = PLAYER_SPAWN_X, 
+		.obj.phy.pos.y = PLAYER_SPAWN_Y,
 #endif
 		.state = ePLAYER_STATE_IDLE,
 		.shot_timer = REND_DURATION,
@@ -37,7 +41,6 @@ void init_player(stPLAYER* player)
 		.obj.phy.is_gravity = true,
 		.obj.phy.is_jump = false,
 		.attack_timer = 0,
-		//.obj.rend,
 	};
 }
 
@@ -74,7 +77,7 @@ void player_update_input(stPLAYER* player, int allegro_key, unsigned char flag)
 	break;
 	case ALLEGRO_KEY_DOWN:
 	{
-		player->obj.phy.pos.y += 3;
+		player->obj.phy.pos.y += CONFIG_PLAYER_TILE_DOWN;
 		player->obj.phy.is_jump = false;
 		player->state = ePLAYER_STATE_MOVE;
 	}

@@ -23,6 +23,7 @@
 #define ENEMY_THROW_SPEED           (0.8f)
 #define ENEMY_THROW_SPEED_ANGRY     (1.6f)
 #define THROW_SPEED                 (2.5)
+#define THROW_SCALE (7)
 
 /************************************************/
 /*         Local Function Declaration           */
@@ -328,8 +329,8 @@ stOBJECT* Throw_Create(stOBJECT* throw_pool, int x, int y) {
             phy->speed.x = 0;
             phy->speed.y = 0;
 
-            coll->box.width = CONFIG_COLLISION_TILE_SIZE;
-            coll->box.height = CONFIG_COLLISION_TILE_SIZE;
+            coll->box.width = THROW_SCALE;
+            coll->box.height = THROW_SCALE;
             coll->tag = eOBJ_TAG_ENEMY_ATTACK;
             coll->is_static = false;
 
