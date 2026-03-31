@@ -720,18 +720,16 @@ bool keyboard_processing_score(void);
 
 ---
 
-### `keboard_get_name`
+### `keyboard_get_name`
 
 ```c
-const char* keboard_get_name(void);
+const char* keyboard_get_name(void);
 ```
 
 **Description**  
 입력된 플레이어 이름 문자열의 포인터를 반환합니다.
 
 **Return Value:** 이름 문자열 (`const char*`, 정적 배열이므로 해제 불필요)
-
-> ⚠️ **주의:** 함수명에 오타(`keyboard` → `keboard`)가 있습니다. 하위 호환성을 위해 수정하지 않도록 합니다.
 
 ---
 
