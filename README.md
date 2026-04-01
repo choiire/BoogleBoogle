@@ -1,5 +1,11 @@
 # 🎮 BuggleBuggle — Complete API Reference Guide
 
+Notion: https://www.notion.so/28a76aa2918583538e44016cd0ba633d?source=copy_link
+
+video: https://www.dropbox.com/scl/fi/nuf032o0k779io3k3r97k/.mp4?rlkey=5hfq4dgct76wu1m2v368ndjn9&st=qqfj26ap&dl=0
+
+
+
 > **Project:** BuggleBuggle — C-based 2D Platformer Arcade Game using Allegro5  
 > **Version:** v1.0 | **Language:** C (C99) | **Dependencies:** Allegro5, SQLite3
 
